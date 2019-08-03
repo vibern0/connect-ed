@@ -40,7 +40,7 @@ contract Accounts is Ownable {
      */
     function invite(string memory _userDid, address _userAddress, uint256 _role) public onlyOwner {
         require(users[_userDid].addr == address(0), "User already exists!");
-        require(invites[_userDid].addr != address(0), "User already invited!");
+        require(invites[_userDid].addr == address(0), "User already invited!");
         User memory user = User(_userAddress, _role);
         invites[_userDid] = user;
         emit userInvited(_userDid, _role, msg.sender);
