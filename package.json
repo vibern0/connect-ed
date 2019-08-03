@@ -1,0 +1,24 @@
+{
+    "name": "unicef_amazonas_challenge",
+    "version": "0.1.0",
+    "description": "unicef_amazonas_challenge",
+    "scripts": {
+        "test": "lerna run test",
+        "coverage": "lerna run coverage",
+        "lint": "lerna run lint"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/HQ20/unicef_amazonas_challenge.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/HQ20/unicef_amazonas_challenge/issues"
+    },
+    "homepage": "https://github.com/HQ20/unicef_amazonas_challenge#readme",
+    "dependencies": {
+        "lerna": "3.16.4"
+    }
+}
