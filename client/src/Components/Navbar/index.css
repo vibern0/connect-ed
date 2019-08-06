@@ -1,0 +1,7 @@
+nav.navbar {
+    background-color: inherit;
+}
+
+a.navbar-item:hover {
+    background-color: inherit;
+}
