@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components'
 import Navbar from '../../Components/Navbar';
-import amazonas from './amazonas.jpg';
+import amazonas from './amazonas.webp';
 
 
 const Background = styled.div`
@@ -18,22 +18,25 @@ const Background = styled.div`
 
     width: 100%;
     height: 880px;
-    object-fit: cover;
+
+    /* put it in the backgtround */
+    position: absolute;
+    z-index: -1;
+    opacity: 0.5;
 `;
 
 interface IMainState {
     //
 }
 class Main extends Component<{}, IMainState> {
-    constructor(props: any) {
-        super(props);
-    }
 
     public render() {
         return (
-            <Background>
+            <>
+                <Background />
                 <Navbar />
-            </Background>
+
+            </>
         );
     }
 }
