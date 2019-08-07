@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components'
-import { Button, Form, Box, Input, Heading, Text, Checkbox } from 'rimble-ui';
+import { Button, Form, Heading, Text, Checkbox } from 'rimble-ui';
 import Navbar from '../../Components/Navbar';
 
 
@@ -76,7 +76,7 @@ class Historical extends Component<{}, IHistoricalState> {
                     </Form.Field>
                     <Checkbox label="Your agree with the terms and conditions" required={true} />
                     <br /><br />
-                    <Button type="submit" width={1}>Sign Up</Button>
+                    <Button type="submit" width={1}>Upload</Button>
                 </Form>
             </Content>
         );
