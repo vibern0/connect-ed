@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, Button, Box, Card, Heading, Text, UPortButton } from 'rimble-ui';
 import logo from '../../Assets/logo.webp';
+import wifi from './wiki.png';
 import './index.css';
 
 
@@ -38,16 +39,14 @@ class Navbar extends Component<{}, INavbarState> {
                     <div id="navbarBasicExample" className="navbar-menu">
                         <div className="navbar-end">
                             <a className="navbar-item" style={{ fontVariantCaps: 'all-petite-caps', fontWeight: 600, fontSize: 'larger' }}>
-                                Documentation
-                        </a>
+                                <img src={wifi} style={{ height: '30px', padding: '0px 10px 0px 0px' }} />
+                                Unicef Challenge
+                            </a>
                             <div className="navbar-item">
                                 <div className="buttons">
                                     <a className="button is-primary" onClick={this.toogleSignUpModal}>
                                         <strong>Sign up</strong>
                                     </a>
-                                    <a className="button is-light">
-                                        Log in
-                                </a>
                                 </div>
                             </div>
                         </div>
