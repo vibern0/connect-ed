@@ -1,7 +1,7 @@
 {
-    "name": "unicef_amazonas_challenge",
+    "name": "connect-ed",
     "version": "0.1.0",
-    "description": "unicef_amazonas_challenge",
+    "description": "connect-ed",
     "scripts": {
         "test": "lerna run test",
         "coverage": "lerna run coverage",
@@ -9,15 +9,15 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/HQ20/unicef_amazonas_challenge.git"
+        "url": "git+https://github.com/obernardovieira/connect-ed.git"
     },
     "keywords": [],
     "author": "",
     "license": "Apache-2.0",
     "bugs": {
-        "url": "https://github.com/HQ20/unicef_amazonas_challenge/issues"
+        "url": "https://github.com/obernardovieira/connect-ed/issues"
     },
-    "homepage": "https://github.com/HQ20/unicef_amazonas_challenge#readme",
+    "homepage": "https://github.com/obernardovieira/connect-ed#readme",
     "dependencies": {
         "lerna": "3.16.4"
     }
