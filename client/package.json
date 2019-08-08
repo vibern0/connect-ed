@@ -28,6 +28,7 @@
         "@types/styled-components": "4.1.18",
         "bignumber.js": "9.0.0",
         "d3-scale": "3.0.1",
+        "ipfs-http-client": "^33.1.1",
         "react": "16.8.6",
         "react-dom": "16.8.6",
         "react-router-dom": "5.0.1",
@@ -37,6 +38,8 @@
         "styled-components": "4.3.2",
         "truffle-contract": "4.0.26",
         "typescript": "3.4.5",
+        "universal-cookie": "^4.0.2",
+        "uport-connect": "^1.1.11",
         "web3": "1.2.0"
     },
     "devDependencies": {
