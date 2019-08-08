@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import styled from 'styled-components'
-import { Button, Form, Heading, Text, Checkbox } from 'rimble-ui';
+import { Button, Checkbox, Form, Heading, Text } from 'rimble-ui';
+import styled from 'styled-components';
 import Navbar from '../../Components/Navbar';
 
 
@@ -18,7 +18,7 @@ class Historical extends Component<{}, IHistoricalState> {
         this.state = {
             file: '',
             validated: false,
-        }
+        };
     }
 
     public handleSubmit = (e: any) => {

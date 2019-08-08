@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import Main from './Pages/Main';
-import Historical from './Pages/Historical';
+
 import Connections from './Pages/Connections';
+import Historical from './Pages/Historical';
+import Main from './Pages/Main';
 
 
-class App extends Component {
+class App extends Component<{}, {}> {
     public render() {
         return (
             <Router>
