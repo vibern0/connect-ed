@@ -19,7 +19,7 @@
     },
     "scripts": {
         "deploy:ganache": "truffle deploy --network development",
-        "start:ganache:dev": "ganache-cli -m \"width whip dream dress captain vessel mix drive oxygen broken soap bone\" -p 8545 -i 201906 --debug",
+        "start:ganache:dev": "ganache-cli -m \"width whip dream dress captain vessel mix drive oxygen broken soap bone\" -p 8545 -i 5777",
         "test": "scripts/test.sh",
         "test:ci": "CI=true scripts/test.sh",
         "coverage": "SOLIDITY_COVERAGE=true scripts/test.sh",
