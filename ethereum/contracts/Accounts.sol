@@ -10,7 +10,7 @@ contract Accounts is Ownable {
     event userInvited(string did, uint256 role, address by);
 
     /**
-     * Role 1 - Normal User; 2 - ISP
+     * Role 1 - Normal User; 2 - ISP; 3 - Region Admin
      */
     struct User {
         address addr;
@@ -63,5 +63,24 @@ contract Accounts is Ownable {
             users[_userDid] = newUser;
         }
         emit userSignedUp(_userDid, msg.sender);
+    }
+
+    /**
+     * set user a sepecific role, only by contract owner
+     * @param _userDid user's did
+     * @param _role role id to the user
+     */
+    function setUserRole(string memory _userDid, uint256 _role) public onlyOwner {
+        User memory user = invites[_userDid];
+        user.role = _role;
+        invites[_userDid] = user;
+    }
+
+    /**
+     * get user information
+     * @param _accountDid did of the account
+     */
+    function getUser(string memory _accountDid) public view returns(address, uint256) {
+        return (users[_accountDid].addr, users[_accountDid].role);
     }
 }
