@@ -1,5 +1,8 @@
 # Connect-Ed
 
+## Usage
+With Linux or OSX, just run the `local_demo.sh` script at the project root folder.
+
 ## Built by
 * [Thomas Moran](https://www.linkedin.com/in/thomas-moran-8634007/)
 * [Bernardo Vieira](https://www.linkedin.com/in/obernardovieira/)
