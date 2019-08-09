@@ -51,15 +51,14 @@ contract Accounts is Ownable {
      * to verify if the user authenticity in future transactions.
      * This is an open method, but might require an invite.
      */
-    function signup(string memory _userDid, uint256 _role) public {
-        if (_role != 1) {
-            User memory invitedUser = invites[_userDid];
-            require(invitedUser.role == _role, "You are not allowed!");
+    function signup(string memory _userDid) public {
+        User memory invitedUser = invites[_userDid];
+        if (invitedUser.role != 0) {
             require(invitedUser.addr == msg.sender, "You are not allowed!");
             users[_userDid] = invitedUser;
             delete invites[_userDid];
         } else {
-            User memory newUser = User(msg.sender, _role);
+            User memory newUser = User(msg.sender, 1);
             users[_userDid] = newUser;
         }
         emit userSignedUp(_userDid, msg.sender);

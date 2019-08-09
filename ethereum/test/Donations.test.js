@@ -30,7 +30,6 @@ contract('Donations', (accounts) => {
         );
         await accountsInstance.signup(
             fakeAdminRegionDid,
-            adminRegionRoleId,
             { from: adminRegionAddress },
         );
     });

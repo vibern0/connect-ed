@@ -30,7 +30,6 @@ contract('ISP', (accounts) => {
         );
         await accountsInstance.signup(
             fakeISPRegionDid,
-            ispRegionRoleId,
             { from: ispRegionAddress },
         );
     });
