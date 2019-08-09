@@ -18,6 +18,7 @@ contract ISP is Ownable {
     }
     DataFile[] private dataFiles;
     mapping(address => uint256) private ispOfRegion;
+    mapping(uint256 => address) private regionISP;
     address private accountsContractAddress;
 
     /**
@@ -42,12 +43,21 @@ contract ISP is Ownable {
      */
     function setRegionISP(uint256 _region, string memory _ispDid) public onlyOwner {
         Accounts accounts = Accounts(accountsContractAddress);
-        require(accounts.isValidAccount(_ispDid), "Not allowed!");
-        // TODO: call it using msg.sender address
-        accounts.setUserRole(_ispDid, 2);
-        // TODO: set using public variable
-        // User memory isp = users[_ispDid];
-        // ispOfRegion[isp.addr] = _region;
+        (address ispAddress,) = accounts.getUser(_ispDid);
+        require(ispAddress != address(0), "Not allowed!");
+        accountsContractAddress.delegatecall(abi.encodePacked(
+            bytes4(keccak256("setUserRole(string,uint256)")), _ispDid, uint256(2)
+        ));
+        ispOfRegion[ispAddress] = _region;
+        regionISP[_region] = ispAddress;
+    }
+
+    /**
+     * get region admin
+     * @param _region region's id
+     */
+    function getRegionISP(uint256 _region) public view returns(address) {
+        return regionISP[_region];
     }
 
     /**
@@ -63,10 +73,9 @@ contract ISP is Ownable {
         string memory _ispDid,
         uint256 _region
     ) public onlyISPOfRegion(_region) {
-        // TODO: use public data
-        // User memory isp = users[_ispDid];
-        address ispAddr = 0x6fb7f543f7F5f0D225F7861827a3FEAC2A4266f6;
-        DataFile memory dataFile = DataFile(_ipfsHash, _md5, ispAddr, _region, block.timestamp);
+        Accounts accounts = Accounts(accountsContractAddress);
+        (address ispAddress,) = accounts.getUser(_ispDid);
+        DataFile memory dataFile = DataFile(_ipfsHash, _md5, ispAddress, _region, block.timestamp);
         dataFiles.push(dataFile);
     }
 
