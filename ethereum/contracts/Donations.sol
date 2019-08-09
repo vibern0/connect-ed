@@ -9,7 +9,8 @@ import "./Accounts.sol";
 contract Donations is Ownable {
 
     mapping(address => uint256) private donations;
-    mapping(address => uint256) public adminOfRegion;
+    mapping(uint256 => address) private regionAdmin;
+    mapping(address => uint256) private adminOfRegion;
     address[] public donors;
     address private accountsContractAddress;
 
@@ -29,13 +30,13 @@ contract Donations is Ownable {
     }
 
     /**
-     * withdraw the needed ammount to a region
-     * @param _ammount the ammount to withdraw
+     * withdraw the needed amount to a region
+     * @param _amount the amount to withdraw
      */
-    function withdraw(uint256 _ammount) public onlyRegionAdmin(adminOfRegion[msg.sender]) {
+    function requestWithdraw(uint256 _amount) public onlyRegionAdmin(adminOfRegion[msg.sender]) {
         uint256 currentBalance = address(this).balance;
-        require(_ammount <= currentBalance, "Not enought!");
-        // transfer(msg.sender, _ammount); // TODO: does this works?
+        require(_amount <= currentBalance, "Not enought!");
+        msg.sender.transfer(_amount);
     }
 
     /**
@@ -45,15 +46,21 @@ contract Donations is Ownable {
      */
     function setRegionAdmin(uint256 _region, string memory _adminDid) public onlyOwner {
         Accounts accounts = Accounts(accountsContractAddress);
-        require(accounts.isValidAccount(_adminDid), "Not allowed!");
-        // TODO: call it using msg.sender address
-        // accounts.setUserRole(_adminDid, 3);
+        (address adminAddress,) = accounts.getUser(_adminDid);
+        require(adminAddress != address(0), "Not allowed!");
         accountsContractAddress.delegatecall(abi.encodePacked(
             bytes4(keccak256("setUserRole(string,uint256)")), _adminDid, uint256(3)
         ));
-        // TODO: set role using address
-        // Accounts.User storage user = accounts.users(_adminDid);
-        // adminOfRegion[user.addr] = _region;
+        adminOfRegion[adminAddress] = _region;
+        regionAdmin[_region] = adminAddress;
+    }
+
+    /**
+     * get region admin
+     * @param _region region's id
+     */
+    function getRegionAdmin(uint256 _region) public view returns(address) {
+        return regionAdmin[_region];
     }
 
     /**
@@ -65,7 +72,7 @@ contract Donations is Ownable {
         if (donations[msg.sender] == 0) {
             donors.push(msg.sender);
         }
-        // receive ETH and save donated ammount
+        // receive ETH and save donated amount
         donations[msg.sender] = donations[msg.sender] + msg.value;
     }
 }
