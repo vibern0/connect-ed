@@ -67,7 +67,7 @@ contract Donations is Ownable {
      * fallback function to receive donations
      * does not requires login, can be anonymous
      */
-    function () external payable {
+    function donate() public payable {
         // if the using is giving ETH for the first time, add it to the list
         if (donations[msg.sender] == 0) {
             donors.push(msg.sender);
