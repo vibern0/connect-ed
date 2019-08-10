@@ -29,9 +29,9 @@ class Navbar extends Component<INavbarProps, INavbarState> {
 
     constructor(props: any) {
         super(props);
-        // if the user is not in the root page or donate page
+        // if the user is not logged in and accessing a private page
         // redirect to main page
-        if (window.location.pathname !== '/' && window.location.pathname !== '/donate') {
+        if (this.props.cookies.get('did') === undefined && window.location.pathname === '/historical') {
             window.location.href = '/';
             return;
         }

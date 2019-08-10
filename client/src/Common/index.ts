@@ -55,13 +55,13 @@ class BlockchainGeneric {
         });
     }
 
-    public static async loadAccountsContract(web3: any): Promise<{ accountsContract: any }> {
+    public static async loadAccountsContract(web3: any): Promise<any> {
         // Get the contract instance.
         const Contract = truffleContract(AccountsContract);
         Contract.setProvider(web3.currentProvider);
         const instance = await Contract.deployed();
         // return values
-        return { accountsContract: instance };
+        return instance;
     }
 
     public static async loadDonationsContract(web3: any): Promise<any> {
