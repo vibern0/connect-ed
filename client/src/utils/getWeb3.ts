@@ -14,6 +14,12 @@ const getWeb3 = () => new Promise((resolve, reject) => {
             } catch (error) {
                 reject(error);
             }
+        } else {
+            const web3 = new Web3(
+                `${process.env.REACT_APP_RPC_PROTOCOL}:` +
+                `//${process.env.REACT_APP_RPC_URL}:${process.env.REACT_APP_RPC_PORT}`,
+            );
+            resolve(web3);
         }
     });
 });
