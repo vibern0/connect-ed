@@ -12,7 +12,7 @@ import wifi from './wiki.png';
 
 
 const NavbarItem = styled.div`
-    margin: 0px 15px;
+    margin: 0px 5px;
     cursor: pointer;
 `;
 interface INavbarProps {
@@ -144,13 +144,19 @@ class Navbar extends Component<INavbarProps, INavbarState> {
         const { uport, cookies } = this.props;
         // load uport status from browser
         uport.loadState();
-        const role = 2;
         const username = uport.state.name;
         // if the user is logged, say hello!
+        const commonNavbarItems = (
+            <>
+                <NavbarItem className="navbar-item"><a href="/donate">Donate</a></NavbarItem>
+                <NavbarItem className="navbar-item"><a href="/connections">Connection</a></NavbarItem>
+            </>
+        );
         if (username !== undefined) {
             return (
                 <Flex>
-                    {role === 2 && <NavbarItem className="navbar-item">ISP</NavbarItem>}
+                    {commonNavbarItems}
+                    <NavbarItem className="navbar-item"><a href="/historical">Historical</a></NavbarItem>
                     <NavbarItem className="navbar-item">Wecolme, {username}</NavbarItem>
                     <NavbarItem className="navbar-item">
                         <Avatar
@@ -163,11 +169,12 @@ class Navbar extends Component<INavbarProps, INavbarState> {
             );
         }
         return (
-            <div className="buttons">
+            <Flex>
+                {commonNavbarItems}
                 <a className="button is-primary" onClick={this.toogleSignUpModal}>
                     <strong>Sign up</strong>
                 </a>
-            </div>
+            </Flex>
         );
     }
 
