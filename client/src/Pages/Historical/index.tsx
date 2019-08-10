@@ -35,7 +35,6 @@ class Historical extends Component<{}, IHistoricalState> {
     public render() {
         return (
             <>
-                <Navbar />
                 {this.renderUploadOption()}
             </>
         );

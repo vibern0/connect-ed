@@ -32,7 +32,6 @@ class Donate extends Component<{}, IDonateState> {
         const { donationAmount } = this.state;
         return (
             <>
-                <Navbar />
                 <Content>
                     <br />
                     <br />

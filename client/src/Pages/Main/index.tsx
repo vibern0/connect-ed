@@ -1,47 +1,66 @@
 import React, { Component } from 'react';
 import { Heading } from 'rimble-ui';
-import styled from 'styled-components';
+import Cookies from 'universal-cookie';
+
+import BlockchainGeneric from '../../Common';
+import getUport from '../../utils/getUport';
+import { Background, Content } from './styles';
+
 import Navbar from '../../Components/Navbar';
-import amazonas from './amazonas.webp';
 import unicefLogo from './unicef-logo.png';
 
 
-const Background = styled.div`
-    /* The image used */
-    background-image: url(${amazonas});
+interface IMainState {
+    web3: any;
+    uport: any;
+    userAccount: string;
+    accountsContract: any;
+    cookies: Cookies;
+}
+class Main extends Component<{}, IMainState> {
 
-    /* Full height */
-    height: 100%;
+    constructor(props: any) {
+        super(props);
+        const cookies = new Cookies();
+        this.state = {
+            accountsContract: undefined as any,
+            cookies,
+            uport: getUport(),
+            userAccount: '',
+            web3: undefined as any,
+        };
+    }
 
-    /* Center and scale the image nicely */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-
-    width: 100%;
-    height: 880px;
-
-    /* put it in the backgtround */
-    position: absolute;
-    z-index: -1;
-    opacity: 0.5;
-`;
-const Content = styled.div`
-    text-align: center;
-`;
-
-
-class Main extends Component<{}, {}> {
+    public componentDidMount = () => {
+        const { cookies } = this.state;
+        if (cookies.get('did') !== undefined) {
+            BlockchainGeneric.onLoad().then((generic) => {
+                BlockchainGeneric.loadAccountsContract(generic.web3).then((accountsContract: any) => {
+                    this.setState({
+                        accountsContract,
+                        userAccount: generic.userAccount,
+                        web3: generic.web3,
+                    });
+                });
+            });
+        }
+    }
 
     public render() {
+        const { cookies, userAccount, accountsContract, uport } = this.state;
         return (
             <>
                 <Background />
-                <Navbar />
+                <Navbar
+                    userAccount={userAccount}
+                    accountsContract={accountsContract}
+                    cookies={cookies}
+                    uport={uport}
+                />
                 <Content>
-                    <img src={unicefLogo} style={{height: '300px'}} />
+                    <img src={unicefLogo} style={{ height: '300px' }} />
                     <Heading.h1>Connect-Ed</Heading.h1>
-                    <Heading.h3 theme={{colors: { grey: '#696969' }}} color="grey">
+                    <Heading.h3 theme={{ colors: { grey: '#696969' } }} color="grey">
                         REDUCING THE DIGITAL DEVIDE
                     </Heading.h3>
                 </Content>
