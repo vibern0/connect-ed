@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Heading } from 'rimble-ui';
 import Cookies from 'universal-cookie';
 
-import BlockchainGeneric from '../../Common';
+import BlockchainGeneric, { IBasicComponentState } from '../../Common';
 import getUport from '../../utils/getUport';
 import { Background, Content } from './styles';
 
@@ -10,38 +10,28 @@ import Navbar from '../../Components/Navbar';
 import unicefLogo from './unicef-logo.png';
 
 
-interface IMainState {
-    web3: any;
-    uport: any;
-    userAccount: string;
-    accountsContract: any;
-    cookies: Cookies;
-}
-class Main extends Component<{}, IMainState> {
+class Main extends Component<{}, IBasicComponentState> {
 
     constructor(props: any) {
         super(props);
-        const cookies = new Cookies();
         this.state = {
             accountsContract: undefined as any,
-            cookies,
+            cookies: new Cookies(),
             uport: getUport(),
             userAccount: '',
             web3: undefined as any,
         };
     }
 
-    public componentDidMount = () => {
+    public componentDidMount = async () => {
         const { cookies } = this.state;
         if (cookies.get('did') !== undefined) {
-            BlockchainGeneric.onLoad().then((generic) => {
-                BlockchainGeneric.loadAccountsContract(generic.web3).then((accountsContract: any) => {
-                    this.setState({
-                        accountsContract,
-                        userAccount: generic.userAccount,
-                        web3: generic.web3,
-                    });
-                });
+            const generic = await BlockchainGeneric.onLoad();
+            const accountsContract = await BlockchainGeneric.loadAccountsContract(generic.web3);
+            this.setState({
+                accountsContract,
+                userAccount: generic.userAccount,
+                web3: generic.web3,
             });
         }
     }

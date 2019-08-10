@@ -55,7 +55,7 @@ class Navbar extends Component<INavbarProps, INavbarState> {
             const generic = await BlockchainGeneric.onLoad();
             const newAccountsContract = await BlockchainGeneric.loadAccountsContract(generic.web3);
             currentUserAccount = generic.userAccount;
-            currentAccountsContract = newAccountsContract.accountsContract;
+            currentAccountsContract = newAccountsContract;
         }
         //
         const req = {
