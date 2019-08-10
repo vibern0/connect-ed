@@ -29,6 +29,12 @@ class Navbar extends Component<INavbarProps, INavbarState> {
 
     constructor(props: any) {
         super(props);
+        // if the user is not in the root page or donate page
+        // redirect to main page
+        if (window.location.pathname !== '/' && window.location.pathname !== '/donate') {
+            window.location.href = '/';
+            return;
+        }
         this.state = {
             toggleSignUpModal: false,
             toogleLogoutModal: false,
