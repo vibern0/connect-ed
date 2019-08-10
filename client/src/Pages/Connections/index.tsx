@@ -14,7 +14,6 @@ class Connections extends Component<{}, IConnectionsState> {
     public render() {
         return (
             <>
-                <Navbar />
                 <br />
                 <br />
                 <AmazonasMap />

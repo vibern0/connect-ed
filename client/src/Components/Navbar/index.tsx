@@ -1,21 +1,31 @@
 import React, { Component } from 'react';
 import { Box, Button, Card, Heading, Modal, Text, UPortButton, Avatar, Flex } from 'rimble-ui';
 import styled from 'styled-components';
+import Cookies from 'universal-cookie';
+
+import BlockchainGeneric from '../../Common';
+
 import logo from '../../Assets/logo.webp';
 import avatar from './avatar.png';
+import './index.css';
 import wifi from './wiki.png';
 
-import './index.css';
 
 const NavbarItem = styled.div`
     margin: 0px 15px;
     cursor: pointer;
 `;
+interface INavbarProps {
+    uport: any;
+    cookies: Cookies;
+    userAccount: string;
+    accountsContract: any;
+}
 interface INavbarState {
     toogleLogoutModal: boolean;
     toggleSignUpModal: boolean;
 }
-class Navbar extends Component<{}, INavbarState> {
+class Navbar extends Component<INavbarProps, INavbarState> {
 
     constructor(props: any) {
         super(props);
@@ -25,19 +35,57 @@ class Navbar extends Component<{}, INavbarState> {
         };
     }
 
-    public toogleSignUpModal = (e: any) => {
+    public toogleSignUpModal = (event: any) => {
         this.setState((state) => ({ toggleSignUpModal: !state.toggleSignUpModal }));
-        e.preventDefault();
+        event.preventDefault();
     }
 
-    public toogleLogoutModal = (e: any) => {
+    public toogleLogoutModal = (event: any) => {
         this.setState((state) => ({ toogleLogoutModal: !state.toogleLogoutModal }));
-        e.preventDefault();
+        event.preventDefault();
     }
 
-    public goMainPage = (e: any) => {
+    public loginWithUPort = async (event: any) => {
+        const { uport, accountsContract, userAccount, cookies } = this.props;
+        //
+        let currentAccountsContract = accountsContract;
+        let currentUserAccount = userAccount;
+        if (accountsContract === undefined || userAccount === undefined) {
+            // load it!
+            const generic = await BlockchainGeneric.onLoad();
+            const newAccountsContract = await BlockchainGeneric.loadAccountsContract(generic.web3);
+            currentUserAccount = generic.userAccount;
+            currentAccountsContract = newAccountsContract.accountsContract;
+        }
+        //
+        const req = {
+            notifications: true,
+            requested: ['name', 'country'],
+        };
+        uport.requestDisclosure(req);
+        uport.onResponse('disclosureReq').then(async (disclosureReq: any) => {
+            //
+            uport.sendVerification({
+                claim: { User: { Signed: new Date() } },
+            });
+            //
+            await currentAccountsContract.signup(disclosureReq.payload.did, { from: currentUserAccount });
+            cookies.set('did', disclosureReq.payload.did, { path: '/' });
+            window.location.reload();
+        });
+    }
+
+    public handleLogout = (event: any) => {
+        const { uport, cookies } = this.props;
+        uport.logout();
+        window.location.reload();
+        cookies.remove('did');
+        event.preventDefault();
+    }
+
+    public goMainPage = (event: any) => {
         (window as any).location.href = '/';
-        console.log('here');
+        event.preventDefault();
     }
 
     public render() {
@@ -87,10 +135,13 @@ class Navbar extends Component<{}, INavbarState> {
     }
 
     private loadCurrentAccount = () => {
-        const isLogged = true;
-        const username = 'someusername';
-        const role = 2; // ISP
-        if (isLogged) {
+        const { uport, cookies } = this.props;
+        // load uport status from browser
+        uport.loadState();
+        const role = 2;
+        const username = uport.state.name;
+        // if the user is logged, say hello!
+        if (username !== undefined) {
             return (
                 <Flex>
                     {role === 2 && <NavbarItem className="navbar-item">ISP</NavbarItem>}
@@ -136,7 +187,7 @@ class Navbar extends Component<{}, INavbarState> {
                         <Text>Welcome to Connect-Ed</Text>
                         <Text>In order to login you need uPort</Text>
                         <Text>Please, use the button below</Text>
-                        <UPortButton>Connect with uPort</UPortButton>
+                        <UPortButton onClick={this.loginWithUPort}>Connect with uPort</UPortButton>
                     </Box>
                 </Card>
             </Modal>
@@ -161,6 +212,7 @@ class Navbar extends Component<{}, INavbarState> {
 
                     <Box p={4} mb={3}>
                         <Heading.h3>Logout</Heading.h3>
+                        <Button onClick={this.handleLogout}>Logout</Button>
                     </Box>
                 </Card>
             </Modal>
