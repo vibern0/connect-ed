@@ -1,26 +1,17 @@
-import BigNumber from 'bignumber.js';
 import ipfsClient from 'ipfs-http-client';
 import truffleContract from 'truffle-contract';
 import Cookies from 'universal-cookie';
 import Web3 from 'web3';
 
-import getWeb3 from '../utils/getWeb3';
-
 import AccountsContract from '../contracts/Accounts.json';
 import DonationsContract from '../contracts/Donations.json';
 import ISPContract from '../contracts/ISP.json';
 
-
-
-const networkID: string = process.env.REACT_APP_NETWORK_ID === undefined ? '3' : process.env.REACT_APP_NETWORK_ID;
-const ipfs = ipfsClient({
+export const ipfs = ipfsClient({
     host: process.env.REACT_APP_IPFS_HOST,
     port: process.env.REACT_APP_IPFS_PORT,
     protocol: process.env.REACT_APP_IPFS_PROTOCOL,
 });
-
-
-
 export interface IBasicComponentState {
     web3: any;
     uport: any;

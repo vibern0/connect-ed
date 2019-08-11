@@ -48,7 +48,7 @@ class Main extends Component<{}, IBasicComponentState> {
                     uport={uport}
                 />
                 <Content>
-                    <img src={unicefLogo} style={{ height: '300px' }} />
+                    <img src={unicefLogo} alt="unicef logo" style={{ height: '300px' }} />
                     <Heading.h1>Connect-Ed</Heading.h1>
                     <Heading.h3 theme={{ colors: { grey: '#696969' } }} color="grey">
                         REDUCING THE DIGITAL DEVIDE

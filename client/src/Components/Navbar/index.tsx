@@ -104,7 +104,7 @@ class Navbar extends Component<INavbarProps, INavbarState> {
                     style={{ height: '160px', padding: '30px 50px 0px 50px' }}
                 >
                     <div className="navbar-brand">
-                        <img src={logo} height="130px" width="130px" onClick={this.goMainPage} />
+                        <img src={logo} alt="tree logo" height="130px" width="130px" onClick={this.goMainPage} />
 
                         <a
                             role="button"
@@ -125,7 +125,7 @@ class Navbar extends Component<INavbarProps, INavbarState> {
                                 className="navbar-item"
                                 style={{ fontVariantCaps: 'all-petite-caps', fontWeight: 600, fontSize: 'larger' }}
                             >
-                                <img src={wifi} style={{ height: '30px', padding: '0px 10px 0px 0px' }} />
+                                <img src={wifi} alt="wifi icon" style={{ height: '30px', padding: '0px 10px 0px 0px' }} />
                                 Unicef Challenge
                             </span>
                             <div className="navbar-item">
@@ -141,7 +141,7 @@ class Navbar extends Component<INavbarProps, INavbarState> {
     }
 
     private loadCurrentAccount = () => {
-        const { uport, cookies } = this.props;
+        const { uport } = this.props;
         // load uport status from browser
         uport.loadState();
         const username = uport.state.name;

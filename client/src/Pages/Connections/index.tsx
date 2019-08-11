@@ -22,7 +22,6 @@ class Connections extends Component<{}, IBasicComponentState> {
     }
 
     public componentDidMount = async () => {
-        const { cookies } = this.state;
         const generic = await BlockchainGeneric.onLoad();
         const accountsContract = await BlockchainGeneric.loadAccountsContract(generic.web3);
         this.setState({

@@ -3,7 +3,7 @@ import { Button, Checkbox, Form, Heading, Text } from 'rimble-ui';
 import styled from 'styled-components';
 import Cookies from 'universal-cookie';
 
-import BlockchainGeneric, { IBasicComponentState } from '../../Common';
+import BlockchainGeneric, { IBasicComponentState, ipfs } from '../../Common';
 import Navbar from '../../Components/Navbar';
 import getUport from '../../utils/getUport';
 
@@ -11,17 +11,12 @@ import getUport from '../../utils/getUport';
 const Content = styled.div`
     margin: 0px 20%;
 `;
-interface IHistoricalState extends IBasicComponentState {
-    file: string;
-    validated: boolean;
-}
-class Historical extends Component<{}, IHistoricalState> {
+class Historical extends Component<{}, IBasicComponentState> {
+    private uploadingFileBuffer: Buffer = undefined as any;
 
     constructor(props: any) {
         super(props);
         this.state = {
-            file: '',
-            validated: false,
             accountsContract: undefined as any,
             cookies: new Cookies(),
             uport: getUport(),
@@ -41,13 +36,21 @@ class Historical extends Component<{}, IHistoricalState> {
     }
 
     public handleSubmit = (event: any) => {
-        console.log(this.state.file);
         // upload file
+        ipfs.add(this.uploadingFileBuffer).then((results: [{ path: string }]) => {
+            console.log(results);
+        });
         event.preventDefault();
     }
 
-    public selectFiles = (event: any) => {
-        this.setState({ file: event.target.files[0] });
+    public captureFile = (event: any) => {
+        const file = event.target.files[0];
+        const reader = new (window as any).FileReader();
+        reader.readAsArrayBuffer(file);
+        reader.onloadend = () => {
+            this.uploadingFileBuffer = new Buffer(reader.result);
+        };
+        event.preventDefault();
     }
 
     public render() {
@@ -72,15 +75,17 @@ class Historical extends Component<{}, IHistoricalState> {
                     <br />
                     <br />
                     <br />
-                    <Heading.h2>Terms and Conditions</Heading.h2>
+                    <Heading.h2 textAlign="center">Terms and Conditions</Heading.h2>
                     <br />
-                    <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fermentum dapibus convallis.
+                    <Text textAlign="center">Lorem ipsum dolor sit amet,
+                        consectetur adipiscing elit. Sed fermentum dapibus convallis.
                         Nulla vel laoreet augue. In tincidunt felis sapien, vel molestie felis fringilla nec. Sed
                         ac malesuada tortor. Etiam tincidunt in arcu eget sollicitudin. Vestibulum tempus blandit
                         dui, pulvinar facilisis metus pharetra nec. Vivamus sed posuere massa. Aliquam accumsan ex
                     sit amet ullamcorper ultricies. Nullam ac felis nisl. In id dictum felis.</Text>
                     <br /><br />
-                    <Text>Nunc eget sem vel dui ultricies scelerisque. Vestibulum nec luctus tortor. Praesent
+                    <Text textAlign="center">Nunc eget sem vel dui ultricies scelerisque.
+                        Vestibulum nec luctus tortor. Praesent
                         pretium nisl nisl, a lacinia felis varius ac. Cras mattis dui eu sodales finibus. Cras
                         finibus placerat euismod. Fusce vestibulum quam id quam volutpat blandit. Ut vulputate
                         consequat nulla, quis posuere lectus finibus eu. Morbi dignissim at purus sit amet
@@ -90,13 +95,14 @@ class Historical extends Component<{}, IHistoricalState> {
                         consectetur velit sed bibendum gravida. Vestibulum ultrices odio vel consequat facilisis.
                         Maecenas lobortis vehicula ullamcorper.</Text>
                     <br /><br /><br />
-                    <Form onSubmit={this.handleSubmit} style={{ padding: '0px 30%' }}>
-                        <Form.Field validated={this.state.validated} label="Data File to Upload" width={1}>
+                    <Form onSubmit={this.handleSubmit} style={{ padding: '0px 25%' }} encType="multipart/form-data">
+                        <Form.Field label="Data File to Upload" width={1}>
                             <Form.Input
+                                width="100%"
                                 id="my_file_upload"
                                 required={true}
                                 type="file"
-                                onChange={this.selectFiles}
+                                onChange={this.captureFile}
                             />
                         </Form.Field>
                         <Checkbox label="Your agree with the terms and conditions" required={true} />
