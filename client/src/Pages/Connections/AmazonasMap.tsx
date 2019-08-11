@@ -4,12 +4,14 @@ import amazonas from './amazonas.json';
 
 import { scaleLinear } from 'd3-scale';
 import {
-    Annotation,
     ComposableMap,
     Geographies,
     Geography,
     ZoomableGroup,
 } from 'react-simple-maps';
+
+
+import ReactTooltip from 'react-tooltip';
 
 const wrapperStyles = {
     margin: '0 auto',
@@ -21,14 +23,33 @@ const popScale = scaleLinear()
     .domain([0, 100000000, 1400000000])
     .range(['#CFD8DC', '#607D8B', '#37474F'] as any);
 
-class AmazonasMap extends Component<{}, {}> {
-    public handleClick = () => {
-        console.log("slkfmdslkfm");
+class AmazonasMap extends Component<{}, { geoName: string}> {
+
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            geoName: '',
+        };
+    }
+
+    public handleClick = (event: any) => {
+        console.log(event.properties.conn_speed_avg);
+    }
+
+    public handleMove = (geography: any, evt: any) => {
+        const { geoName } = this.state;
+        const newGeoName = geography.properties.cod;
+        if (geoName !== newGeoName) {
+            this.setState({ geoName: newGeoName });
+        }
     }
 
     public render() {
         return (
             <div style={wrapperStyles}>
+                <ReactTooltip id="geoName" type="light">
+                    <span>{this.state.geoName}</span>
+                </ReactTooltip>
                 <ComposableMap
                     projectionConfig={{ scale: 2767, rotation: [-11, 0, 0] }}
                     width={720}
@@ -39,15 +60,6 @@ class AmazonasMap extends Component<{}, {}> {
                         <Geographies geography={amazonas}>
                             {(geographies, projection) => this.renderGeography(geographies, projection)}
                         </Geographies>
-                        <Annotation
-                            dx={40}
-                            dy={-30}
-                            subject={[-65, -4]}
-                            strokeWidth={1}
-                            stroke="#607D8B"
-                        >
-                            <text>{"Guadaloupe"}</text>
-                        </Annotation>
                     </ZoomableGroup>
                 </ComposableMap>
             </div>
@@ -55,34 +67,40 @@ class AmazonasMap extends Component<{}, {}> {
     }
 
     private renderGeography = (geographies: any, projection: any) => {
-        return geographies.map((geography: any, i: any) => (
-            <Geography
-                key={i}
-                geography={geography}
-                projection={projection}
-                onClick={this.handleClick}
-                style={{
-                    default: {
-                        fill: popScale((geography as any).properties.pop_est),
-                        stroke: "#607D8B",
-                        strokeWidth: 0.75,
-                        outline: "none",
-                    },
-                    hover: {
-                        fill: "#263238",
-                        stroke: "#607D8B",
-                        strokeWidth: 0.75,
-                        outline: "none",
-                    },
-                    pressed: {
-                        fill: "#263238",
-                        stroke: "#607D8B",
-                        strokeWidth: 0.75,
-                        outline: "none",
-                    }
-                } as any}
-            />
-        ));
+        return geographies.map((geography: any, i: any) => {
+            const geoStyle = {
+                default: {
+                    fill: popScale((geography as any).properties.conn_speed_avg),
+                    outline: 'none',
+                    stroke: '#607D8B',
+                    strokeWidth: 0.75,
+                },
+                hover: {
+                    fill: '#263238',
+                    outline: 'none',
+                    stroke: '#607D8B',
+                    strokeWidth: 0.75,
+                },
+                pressed: {
+                    fill: '#263238',
+                    outline: 'none',
+                    stroke: '#607D8B',
+                    strokeWidth: 0.75,
+                },
+            };
+            return (
+                <Geography
+                    data-tip={true}
+                    data-for="geoName"
+                    key={i}
+                    geography={geography}
+                    projection={projection}
+                    onClick={this.handleClick}
+                    onMouseMove={this.handleMove}
+                    style={geoStyle as any}
+                />
+            );
+        });
     }
 }
 
