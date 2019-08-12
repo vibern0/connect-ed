@@ -14,7 +14,8 @@ import {
 import ReactTooltip from 'react-tooltip';
 
 const wrapperStyles = {
-    margin: '0 auto',
+    float: 'left' as 'left', // lol :facepalm:
+    margin: '0px auto 0px 9%',
     maxWidth: 720,
     width: '100%',
 };
@@ -23,7 +24,14 @@ const popScale = scaleLinear()
     .domain([0, 100000000, 1400000000])
     .range(['#CFD8DC', '#607D8B', '#37474F'] as any);
 
-class AmazonasMap extends Component<{}, { geoName: string}> {
+export interface IRegionData {
+    cod: number;
+    conn_speed_avg: number;
+}
+interface IAmazonasMapProps {
+    toggleInArea: (within: IRegionData) => void;
+}
+class AmazonasMap extends Component<IAmazonasMapProps, { geoName: string}> {
 
     constructor(props: any) {
         super(props);
@@ -66,6 +74,14 @@ class AmazonasMap extends Component<{}, { geoName: string}> {
         );
     }
 
+    private handleMoveEnter = (event: any) => {
+        this.props.toggleInArea(event.properties);
+    }
+
+    private handleMoveLeave = (event: any) => {
+        // this.props.toggleInArea(undefined as any);
+    }
+
     private renderGeography = (geographies: any, projection: any) => {
         return geographies.map((geography: any, i: any) => {
             const geoStyle = {
@@ -97,6 +113,8 @@ class AmazonasMap extends Component<{}, { geoName: string}> {
                     projection={projection}
                     onClick={this.handleClick}
                     onMouseMove={this.handleMove}
+                    onMouseEnter={this.handleMoveEnter}
+                    onMouseLeave={this.handleMoveLeave}
                     style={geoStyle as any}
                 />
             );
