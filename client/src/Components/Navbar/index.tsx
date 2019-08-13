@@ -125,7 +125,11 @@ class Navbar extends Component<INavbarProps, INavbarState> {
                                 className="navbar-item"
                                 style={{ fontVariantCaps: 'all-petite-caps', fontWeight: 600, fontSize: 'larger' }}
                             >
-                                <img src={wifi} alt="wifi icon" style={{ height: '30px', padding: '0px 10px 0px 0px' }} />
+                                <img
+                                    src={wifi}
+                                    alt="wifi icon"
+                                    style={{ height: '30px', padding: '0px 10px 0px 0px' }}
+                                />
                                 Unicef Challenge
                             </span>
                             <div className="navbar-item">
