@@ -9,10 +9,19 @@ import Navbar from '../../Components/Navbar';
 import AmazonasMap, { IRegionData } from './AmazonasMap';
 
 
+interface IDataFileEntry {
+    ipfsHash: any;
+    isp: any;
+    md5: any;
+    region: any;
+    timestamp: any;
+}
 interface IConnectionsState extends IBasicComponentState {
     regionData: IRegionData;
     invalidStartDate: boolean;
     invalidEndDate: boolean;
+    ispContract: any;
+    dataFileEntries: IDataFileEntry[];
 }
 class Connections extends Component<{}, IConnectionsState> {
 
@@ -21,27 +30,47 @@ class Connections extends Component<{}, IConnectionsState> {
         this.state = {
             accountsContract: undefined as any,
             cookies: new Cookies(),
+            dataFileEntries: [],
+            invalidEndDate: false,
+            invalidStartDate: false,
+            ispContract: undefined as any,
             regionData: undefined as any,
             uport: getUport(),
             userAccount: '',
             web3: undefined as any,
-            invalidStartDate: false,
-            invalidEndDate: false,
         };
     }
 
     public componentDidMount = async () => {
         const generic = await BlockchainGeneric.onLoad();
         const accountsContract = await BlockchainGeneric.loadAccountsContract(generic.web3);
+        const ispContract = await BlockchainGeneric.loadISPContract(generic.web3);
+        let dataFileEntries = [];
+        try {
+            dataFileEntries = await ispContract.getDataFiles();
+        } catch (e) {
+            // no need to report error, only happens if there's no entries
+        }
         this.setState({
             accountsContract,
+            dataFileEntries,
+            ispContract,
             userAccount: generic.userAccount,
             web3: generic.web3,
         });
     }
 
     public render() {
-        const { cookies, userAccount, accountsContract, uport, regionData, invalidStartDate, invalidEndDate } = this.state;
+        const {
+            cookies,
+            userAccount,
+            accountsContract,
+            uport,
+            regionData,
+            invalidStartDate,
+            invalidEndDate,
+        } = this.state;
+        // TODO: load datafile entry for a region
         let renderRegionData;
         if (regionData !== undefined) {
             renderRegionData = (
