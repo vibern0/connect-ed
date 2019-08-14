@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+import ipfsClient from 'ipfs-http-client';
 import React, { Component } from 'react';
 import { Button, Checkbox, Form, Heading, Text, Field, Input } from 'rimble-ui';
 import styled from 'styled-components';
@@ -6,6 +8,7 @@ import Cookies from 'universal-cookie';
 import BlockchainGeneric, { IBasicComponentState } from '../../Common';
 import Navbar from '../../Components/Navbar';
 import getUport from '../../utils/getUport';
+import BigNumber from 'bignumber.js';
 
 
 const Content = styled.div`
@@ -16,6 +19,8 @@ interface IHistoricalState extends IBasicComponentState {
     invalidEndDate: boolean;
     startDate: string;
     endDate: string;
+    region: string;
+    ispContract: any;
 }
 class Historical extends Component<{}, IHistoricalState> {
     private uploadingFileBuffer: Buffer = undefined as any;
@@ -25,43 +30,49 @@ class Historical extends Component<{}, IHistoricalState> {
         this.state = {
             accountsContract: undefined as any,
             cookies: new Cookies(),
+            endDate: '',
+            invalidEndDate: false,
+            invalidStartDate: false,
+            ispContract: undefined as any,
+            region: '',
+            startDate: '',
             uport: getUport(),
             userAccount: '',
             web3: undefined as any,
-            invalidEndDate: false,
-            invalidStartDate: false,
-            startDate: '',
-            endDate: '',
         };
     }
 
     public componentDidMount = async () => {
         const generic = await BlockchainGeneric.onLoad();
         const accountsContract = await BlockchainGeneric.loadAccountsContract(generic.web3);
+        const ispContract = await BlockchainGeneric.loadISPContract(generic.web3);
         this.setState({
             accountsContract,
+            ispContract,
             userAccount: generic.userAccount,
             web3: generic.web3,
         });
     }
 
     public handleSubmit = (event: any) => {
-        // upload file
-        import('ipfs-http-client')
-            .then(({ ipfsClient }) => {
-                // Use moduleA
-                const ipfs = ipfsClient({
-                    host: process.env.REACT_APP_IPFS_HOST,
-                    port: process.env.REACT_APP_IPFS_PORT,
-                    protocol: process.env.REACT_APP_IPFS_PROTOCOL,
-                });
-                ipfs.add(this.uploadingFileBuffer).then((results: [{ path: string }]) => {
-                    console.log(results);
-                });
-            })
-            .catch(err => {
-                // Handle failure
-            });
+        const { ispContract, cookies, region, startDate, endDate, userAccount } = this.state;
+        const ipfs = ipfsClient({
+            host: process.env.REACT_APP_IPFS_HOST,
+            port: process.env.REACT_APP_IPFS_PORT,
+            protocol: process.env.REACT_APP_IPFS_PROTOCOL,
+        });
+        const md5Result = crypto.createHash('md5').update(this.uploadingFileBuffer).digest('hex');
+        ipfs.add(this.uploadingFileBuffer).then((results: [{ path: string }]) => {
+            ispContract.uploadDataFile(
+                results[0].path,
+                md5Result,
+                cookies.get('did'),
+                new BigNumber(region),
+                new BigNumber(startDate),
+                new BigNumber(endDate),
+                { from: userAccount },
+            );
+        });
         event.preventDefault();
     }
 
@@ -84,7 +95,9 @@ class Historical extends Component<{}, IHistoricalState> {
     }
 
     private renderUploadOption = () => {
-        const { cookies, userAccount, accountsContract, uport, invalidStartDate, invalidEndDate, startDate, endDate } = this.state;
+        const {
+            cookies, userAccount, accountsContract, uport, invalidStartDate, invalidEndDate, startDate, endDate, region,
+        } = this.state;
         return (
             <>
                 <Navbar
@@ -127,10 +140,20 @@ class Historical extends Component<{}, IHistoricalState> {
                                 onChange={this.captureFile}
                             />
                         </Field>
+                        <Field label="Region (id)">
+                            <Input
+                                value={region}
+                                required={true}
+                                type="text"
+                                onChange={this.handleChangeRegion}
+                            />
+                        </Field>
+                        <br />
                         <Field label="Start Date">
                             <Input
                                 borderColor={invalidStartDate ? 'red' : 'grey'}
                                 value={this.formatDate(startDate)}
+                                required={true}
                                 type="date"
                                 onChange={this.handleChangeIntervalStartDate}
                             />
@@ -139,6 +162,7 @@ class Historical extends Component<{}, IHistoricalState> {
                             <Input
                                 borderColor={invalidEndDate ? 'red' : 'grey'}
                                 value={this.formatDate(endDate)}
+                                required={true}
                                 type="date"
                                 onChange={this.handleChangeIntervalEndDate}
                             />
@@ -159,9 +183,9 @@ class Historical extends Component<{}, IHistoricalState> {
         if (timestamp === '') {
             return '';
         }
-        const date = new Date(parseInt(timestamp));
-        const output = date.getFullYear() + '-' + ("0" + (date.getMonth() + 1)).slice(-2) + '-'
-            + ("0" + date.getDate()).slice(-2);
+        const date = new Date(parseInt(timestamp, 10));
+        const output = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-'
+            + ('0' + date.getDate()).slice(-2);
         return output;
     }
 
@@ -176,6 +200,11 @@ class Historical extends Component<{}, IHistoricalState> {
         const inputDateFromUser = new Date();
         inputDateFromUser.setTime(event.target.valueAsNumber); // javascript timestamps are in milliseconds
         this.setState({ invalidEndDate: (inputDateFromUser.getDay() !== 6), endDate: event.target.valueAsNumber });
+        event.persist();
+    }
+
+    private handleChangeRegion = (event: any) => {
+        this.setState({ region: event.target.value });
         event.persist();
     }
 }
