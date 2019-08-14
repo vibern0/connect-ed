@@ -23,6 +23,12 @@ interface IDonateState extends IBasicComponentState {
     isCurrentUserReginAdmin: boolean;
     donationWithdrawAmount: string;
 }
+/**
+ * Donate component for /donate route.
+ * It allows any user, no necessarly registered, to do some donation.
+ * Donations are intended to be listed, but the current list is just an example.
+ * As a region admin, the page is a bit different and it has the possbility to request a withdraw.
+ */
 class Donate extends Component<{}, IDonateState> {
 
     constructor(props: any) {
@@ -125,10 +131,16 @@ class Donate extends Component<{}, IDonateState> {
         event.preventDefault();
     }
 
+    /**
+     * Handle input change
+     */
     public handleDonationAmountChange = (event: any) => {
         this.setState({ donationAmount: event.target.value });
     }
 
+    /**
+     * Handle input change
+     */
     public handleDonationWithdrawAmountChange = (event: any) => {
         this.setState({ donationWithdrawAmount: event.target.value });
     }
@@ -142,8 +154,9 @@ class Donate extends Component<{}, IDonateState> {
             isCurrentUserReginAdmin,
         } = this.state;
         let contentPage;
-        if (isCurrentUserReginAdmin !== undefined) {
-            contentPage = (isCurrentUserReginAdmin) ? this.renderRegionAdminPage() : this.renderPublicPage();
+        if (isCurrentUserReginAdmin !== undefined || cookies.get('did') === 'demo-region-admin') {
+            contentPage = (isCurrentUserReginAdmin || cookies.get('did') === 'demo-region-admin')
+                ? this.renderRegionAdminPage() : this.renderPublicPage();
         }
         return (
             <>
@@ -161,7 +174,7 @@ class Donate extends Component<{}, IDonateState> {
     }
 
     private renderRegionAdminPage = () => {
-        const { donationWithdrawAmount, totalDonations } = this.state;
+        const { donationWithdrawAmount, totalDonations, cookies } = this.state;
         return (
             <>
                 <br />
@@ -197,7 +210,9 @@ class Donate extends Component<{}, IDonateState> {
                         />
                     </Form.Field>
                     <br />
-                    <Button type="submit" width={1}>Request Withdraw</Button>
+                    <Button disabled={cookies.get('did') === 'demo-region-admin'} type="submit" width={1}>
+                        Request Withdraw
+                    </Button>
                 </Form>
             </>
         );

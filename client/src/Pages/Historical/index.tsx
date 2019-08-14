@@ -27,6 +27,12 @@ interface IHistoricalState extends IBasicComponentState {
     region: string;
     ispContract: any;
 }
+/**
+ * Historical component for /historical page.
+ * Only signed users can access this page, and although the button is enable
+ * for everyone, only ISP's the the mentioned region in the input, are allowed
+ * to uploa a file.
+ */
 class Historical extends Component<{}, IHistoricalState> {
     private uploadingFileBuffer: Buffer = undefined as any;
 
@@ -76,6 +82,9 @@ class Historical extends Component<{}, IHistoricalState> {
         event.preventDefault();
     }
 
+    /**
+     * Handle input change (when selecting a file)
+     */
     public captureFile = (event: any) => {
         const file = event.target.files[0];
         const reader = new (window as any).FileReader();
@@ -189,6 +198,9 @@ class Historical extends Component<{}, IHistoricalState> {
         return output;
     }
 
+    /**
+     * Handle input change
+     */
     private handleChangeIntervalStartDate = (event: any) => {
         const inputDateFromUser = new Date();
         inputDateFromUser.setTime(event.target.valueAsNumber); // javascript timestamps are in milliseconds
@@ -196,6 +208,9 @@ class Historical extends Component<{}, IHistoricalState> {
         event.persist();
     }
 
+    /**
+     * Handle input change
+     */
     private handleChangeIntervalEndDate = (event: any) => {
         const inputDateFromUser = new Date();
         inputDateFromUser.setTime(event.target.valueAsNumber); // javascript timestamps are in milliseconds
@@ -203,6 +218,9 @@ class Historical extends Component<{}, IHistoricalState> {
         event.persist();
     }
 
+    /**
+     * Handle input change
+     */
     private handleChangeRegion = (event: any) => {
         this.setState({ region: event.target.value });
         event.persist();

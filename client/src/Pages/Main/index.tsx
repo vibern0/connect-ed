@@ -10,6 +10,9 @@ import Navbar from '../../Components/Navbar';
 import unicefLogo from './unicef-logo.webp';
 
 
+/**
+ * Main component, for the main page.
+ */
 class Main extends Component<{}, IBasicComponentState> {
 
     constructor(props: any) {

@@ -15,6 +15,9 @@ const NavbarItem = styled.div`
     margin: 0px 5px;
     cursor: pointer;
 `;
+/**
+ * Navbar properties and states
+ */
 interface INavbarProps {
     uport: any;
     cookies: Cookies;
@@ -25,6 +28,10 @@ interface INavbarState {
     toogleLogoutModal: boolean;
     toggleSignUpModal: boolean;
 }
+/**
+ * Navbar component. Holds all the actions related to navbar.
+ * LOgin, logout, listing account and menu.
+ */
 class Navbar extends Component<INavbarProps, INavbarState> {
 
     constructor(props: any) {
@@ -41,11 +48,17 @@ class Navbar extends Component<INavbarProps, INavbarState> {
         };
     }
 
+    /**
+     * open/close sigup modal
+     */
     public toogleSignUpModal = (event: any) => {
         this.setState((state) => ({ toggleSignUpModal: !state.toggleSignUpModal }));
         event.preventDefault();
     }
 
+    /**
+     * open/close logout modal
+     */
     public toogleLogoutModal = (event: any) => {
         this.setState((state) => ({ toogleLogoutModal: !state.toogleLogoutModal }));
         event.preventDefault();
@@ -84,6 +97,12 @@ class Navbar extends Component<INavbarProps, INavbarState> {
     public loginDemoISP = (event: any) => {
         const { cookies } = this.props;
         cookies.set('did', 'demo-isp', { path: '/' });
+        window.location.reload();
+    }
+
+    public loginDemoRegionAdmin = (event: any) => {
+        const { cookies } = this.props;
+        cookies.set('did', 'demo-region-admin', { path: '/' });
         window.location.reload();
     }
 
@@ -220,6 +239,10 @@ class Navbar extends Component<INavbarProps, INavbarState> {
                         <br />
                         <a className="button is-primary" onClick={this.loginDemoISP}>
                             <strong>Demo ISP Account</strong>
+                        </a>
+                        <br />
+                        <a className="button is-primary" onClick={this.loginDemoRegionAdmin}>
+                            <strong>Demo Region Admin</strong>
                         </a>
                     </Box>
                 </Card>

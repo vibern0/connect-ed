@@ -6,6 +6,9 @@ import AccountsContract from '../contracts/Accounts.json';
 import DonationsContract from '../contracts/Donations.json';
 import ISPContract from '../contracts/ISP.json';
 
+/**
+ * Common state variables used accross all components
+ */
 export interface IBasicComponentState {
     web3: any;
     uport: any;
@@ -27,6 +30,9 @@ interface IBlockchainState {
  */
 class BlockchainGeneric {
 
+    /**
+     * Initial basic loading to connect to web3 world!
+     */
     // tslint:disable-next-line member-ordering
     public static async onLoad(): Promise<IBlockchainState> {
         // load web3 and the usar accoun
@@ -40,6 +46,10 @@ class BlockchainGeneric {
         });
     }
 
+    /**
+     * Create an instance of accounts contract
+     * @param web3 web instance
+     */
     public static async loadAccountsContract(web3: any): Promise<any> {
         // Get the contract instance.
         const Contract = truffleContract(AccountsContract);
@@ -49,6 +59,10 @@ class BlockchainGeneric {
         return instance;
     }
 
+    /**
+     * Create an instance of donations contract
+     * @param web3 web instance
+     */
     public static async loadDonationsContract(web3: any): Promise<any> {
         // Get the contract instance.
         const Contract = truffleContract(DonationsContract);
@@ -58,6 +72,10 @@ class BlockchainGeneric {
         return instance;
     }
 
+    /**
+     * Create an instance of isp contract
+     * @param web3 web instance
+     */
     public static async loadISPContract(web3: any): Promise<any> {
         // Get the contract instance.
         const Contract = truffleContract(ISPContract);

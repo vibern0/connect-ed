@@ -30,6 +30,11 @@ interface IConnectionsState extends IBasicComponentState {
     dataFileEntries: IDataFileEntry[];
     ipfsDataFileData: string;
 }
+/**
+ * Connections component for /connection route.
+ * It loads some static fake data into a d3 map, with real geographycal information
+ * and allows the user to view uploaded data by ISP for a given region.
+ */
 class Connections extends Component<{}, IConnectionsState> {
 
     private loadingIpfsDataFile: boolean = false;
@@ -163,6 +168,9 @@ class Connections extends Component<{}, IConnectionsState> {
         );
     }
 
+    /**
+     * Handle input change
+     */
     private handleChangeIntervalStartDate = (event: any) => {
         const inputDateFromUser = new Date();
         inputDateFromUser.setTime(event.target.valueAsNumber); // javascript timestamps are in milliseconds
@@ -170,6 +178,9 @@ class Connections extends Component<{}, IConnectionsState> {
         event.persist();
     }
 
+    /**
+     * Handle input change
+     */
     private handleChangeIntervalEndDate = (event: any) => {
         const inputDateFromUser = new Date();
         inputDateFromUser.setTime(event.target.valueAsNumber); // javascript timestamps are in milliseconds
@@ -177,6 +188,9 @@ class Connections extends Component<{}, IConnectionsState> {
         event.persist();
     }
 
+    /**
+     * Update when mouse moves over regions
+     */
     private toggleAreaMessage = (regionData: IRegionData) => {
         this.setState({ regionData });
     }

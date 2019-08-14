@@ -18,6 +18,10 @@ interface IAdminState extends IBasicComponentState {
     newRegionAdminDid: string;
     newRegionAdminRegion: string;
 }
+/**
+ * Admin component for /admin route,
+ * used to set isp of region and region admin
+ */
 class Admin extends Component<{}, IAdminState> {
 
     constructor(props: any) {
@@ -160,6 +164,9 @@ class Admin extends Component<{}, IAdminState> {
         event.preventDefault();
     }
 
+    /**
+     * Handle input change
+     */
     private handleChange = (event: any) => {
         if (event.target.name === 'newIspDid') {
             this.setState({ newIspDid: event.target.value });
