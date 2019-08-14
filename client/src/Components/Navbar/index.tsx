@@ -81,6 +81,12 @@ class Navbar extends Component<INavbarProps, INavbarState> {
         });
     }
 
+    public loginDemoISP = (event: any) => {
+        const { cookies } = this.props;
+        cookies.set('did', 'demo-isp', { path: '/' });
+        window.location.reload();
+    }
+
     public handleLogout = (event: any) => {
         const { uport, cookies } = this.props;
         uport.logout();
@@ -145,7 +151,7 @@ class Navbar extends Component<INavbarProps, INavbarState> {
     }
 
     private loadCurrentAccount = () => {
-        const { uport } = this.props;
+        const { uport, cookies } = this.props;
         // load uport status from browser
         uport.loadState();
         const username = uport.state.name;
@@ -156,12 +162,12 @@ class Navbar extends Component<INavbarProps, INavbarState> {
                 <NavbarItem className="navbar-item"><a href="/connections">Connection</a></NavbarItem>
             </>
         );
-        if (username !== undefined) {
+        if (username !== undefined || cookies.get('did') !== undefined) {
             return (
                 <Flex>
                     {commonNavbarItems}
                     <NavbarItem className="navbar-item"><a href="/historical">Historical</a></NavbarItem>
-                    <NavbarItem className="navbar-item">Wecolme, {username}</NavbarItem>
+                    <NavbarItem className="navbar-item">Wecolme, {(username !== undefined) ? username : cookies.get('did')}</NavbarItem>
                     <NavbarItem className="navbar-item">
                         <Avatar
                             size="medium"
@@ -200,11 +206,21 @@ class Navbar extends Component<INavbarProps, INavbarState> {
 
                     <Box p={4} mb={3}>
                         <Heading.h3>Sign Up</Heading.h3>
+                        <br />
                         <Text>Hello,</Text>
                         <Text>Welcome to Connect-Ed</Text>
                         <Text>In order to login you need uPort</Text>
                         <Text>Please, use the button below</Text>
+                        <br />
+                        <br />
                         <UPortButton onClick={this.loginWithUPort}>Connect with uPort</UPortButton>
+                        <br />
+                        <br />
+                        <Text>You can use the demo ISP account to see how the system is within.</Text>
+                        <br />
+                        <a className="button is-primary" onClick={this.loginDemoISP}>
+                            <strong>Demo ISP Account</strong>
+                        </a>
                     </Box>
                 </Card>
             </Modal>
