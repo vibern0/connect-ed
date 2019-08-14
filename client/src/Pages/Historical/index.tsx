@@ -47,6 +47,21 @@ class Historical extends Component<{}, IHistoricalState> {
 
     public handleSubmit = (event: any) => {
         // upload file
+        import('ipfs-http-client')
+            .then(({ ipfsClient }) => {
+                // Use moduleA
+                const ipfs = ipfsClient({
+                    host: process.env.REACT_APP_IPFS_HOST,
+                    port: process.env.REACT_APP_IPFS_PORT,
+                    protocol: process.env.REACT_APP_IPFS_PROTOCOL,
+                });
+                ipfs.add(this.uploadingFileBuffer).then((results: [{ path: string }]) => {
+                    console.log(results);
+                });
+            })
+            .catch(err => {
+                // Handle failure
+            });
         event.preventDefault();
     }
 
