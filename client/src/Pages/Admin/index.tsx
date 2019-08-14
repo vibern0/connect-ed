@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import React, { Component } from 'react';
 import { Button, Form, Heading, Box } from 'rimble-ui';
 import Cookies from 'universal-cookie';
@@ -60,6 +61,7 @@ class Admin extends Component<{}, IAdminState> {
             uport,
             isCurrentUserOwner,
         } = this.state;
+        console.log(cookies.get('did'));
         return (
             <>
                 <Navbar
@@ -78,35 +80,52 @@ class Admin extends Component<{}, IAdminState> {
     private renderAdminAction = () => {
         const { newIspDid, newIspRegion } = this.state;
         return (
-            <>
+            <div style={{ margin: '0px 20%' }}>
                 <Heading.h2>Set account as ISP</Heading.h2>
                 <Form onSubmit={this.handleSubmitNewIsp}>
                     <Form.Field label="DID of the new ISP" width={1}>
                         <Form.Input
                             type="string"
+                            name="newIspDid"
                             value={newIspDid}
                             required={true}
                             width={1}
+                            onChange={this.handleChangeNewIsp}
                         />
                     </Form.Field>
                     <Form.Field label="ISP of Readion (id)" width={1}>
                         <Form.Input
                             type="string"
+                            name="newIspRegion"
                             value={newIspRegion}
                             required={true}
                             width={1}
+                            onChange={this.handleChangeNewIsp}
                         />
                     </Form.Field>
                     <Button type="submit" width={1}>
                         Register ISP
                     </Button>
                 </Form>
-            </>
+            </div>
         );
     }
 
     private handleSubmitNewIsp = (event: any) => {
+        const { ispContract, userAccount, newIspRegion, newIspDid } = this.state;
+        ispContract.setRegionISP(new BigNumber(newIspRegion), newIspDid, { from: userAccount })
+            .then(() => {
+                alert('Transaction sent!');
+            });
         event.preventDefault();
+    }
+
+    private handleChangeNewIsp = (event: any) => {
+        if (event.target.name === 'newIspDid') {
+            this.setState({ newIspDid: event.target.value });
+        } else if (event.target.name === 'newIspRegion') {
+            this.setState({ newIspRegion: event.target.value });
+        }
     }
 }
 
