@@ -105,6 +105,3 @@ typings/
 
 # the .secret
 .secret
-
-# the contracts link
-client/src/contracts
