@@ -11,9 +11,12 @@ import Navbar from '../../Components/Navbar';
 
 interface IAdminState extends IBasicComponentState {
     ispContract: any;
+    donationsContract: any;
     isCurrentUserOwner: boolean;
     newIspDid: string;
     newIspRegion: string;
+    newRegionAdminDid: string;
+    newRegionAdminRegion: string;
 }
 class Admin extends Component<{}, IAdminState> {
 
@@ -22,10 +25,13 @@ class Admin extends Component<{}, IAdminState> {
         this.state = {
             accountsContract: undefined as any,
             cookies: new Cookies(),
+            donationsContract: undefined as any,
             isCurrentUserOwner: false,
             ispContract: undefined as any,
             newIspDid: '',
             newIspRegion: '',
+            newRegionAdminDid: '',
+            newRegionAdminRegion: '',
             uport: getUport(),
             userAccount: '',
             web3: undefined as any,
@@ -35,22 +41,17 @@ class Admin extends Component<{}, IAdminState> {
     public componentDidMount = async () => {
         const generic = await BlockchainGeneric.onLoad();
         const accountsContract = await BlockchainGeneric.loadAccountsContract(generic.web3);
+        const donationsContract = await BlockchainGeneric.loadDonationsContract(generic.web3);
         const ispContract = await BlockchainGeneric.loadISPContract(generic.web3);
         const isCurrentUserOwner = await ispContract.owner() === generic.userAccount;
         this.setState({
             accountsContract,
+            donationsContract,
             isCurrentUserOwner,
             ispContract,
             userAccount: generic.userAccount,
             web3: generic.web3,
         });
-    }
-
-    public apply = () => {
-        //console.log(await ispContract.setRegionISP(1, 'did:ethr:0x7f43c88d43f77781d1217cd6c095829c0f2502df', { from: generic.userAccount }));
-        //console.log(await ispContract.getRegionISP(1));
-        //console.log(await ispContract.uploadDataFile('someHash', 'somemd5', 'did:ethr:0x7f43c88d43f77781d1217cd6c095829c0f2502df', 1, { from: generic.userAccount }));
-        //console.log(await ispContract.getDataFiles());
     }
 
     public render() {
@@ -78,7 +79,7 @@ class Admin extends Component<{}, IAdminState> {
     }
 
     private renderAdminAction = () => {
-        const { newIspDid, newIspRegion } = this.state;
+        const { newIspDid, newIspRegion, newRegionAdminDid, newRegionAdminRegion } = this.state;
         return (
             <div style={{ margin: '0px 20%' }}>
                 <Heading.h2>Set account as ISP</Heading.h2>
@@ -90,7 +91,7 @@ class Admin extends Component<{}, IAdminState> {
                             value={newIspDid}
                             required={true}
                             width={1}
-                            onChange={this.handleChangeNewIsp}
+                            onChange={this.handleChange}
                         />
                     </Form.Field>
                     <Form.Field label="ISP of Readion (id)" width={1}>
@@ -100,11 +101,41 @@ class Admin extends Component<{}, IAdminState> {
                             value={newIspRegion}
                             required={true}
                             width={1}
-                            onChange={this.handleChangeNewIsp}
+                            onChange={this.handleChange}
                         />
                     </Form.Field>
                     <Button type="submit" width={1}>
                         Register ISP
+                    </Button>
+                </Form>
+                <br />
+                <br />
+                <br />
+                <br />
+                <Heading.h2>Set account as Region Admin</Heading.h2>
+                <Form onSubmit={this.handleSubmitNewRegionAdmin}>
+                    <Form.Field label="DID of the new Region Admin" width={1}>
+                        <Form.Input
+                            type="string"
+                            name="newRegionAdminDid"
+                            value={newRegionAdminDid}
+                            required={true}
+                            width={1}
+                            onChange={this.handleChange}
+                        />
+                    </Form.Field>
+                    <Form.Field label="Admin of Region (id)" width={1}>
+                        <Form.Input
+                            type="string"
+                            name="newRegionAdminRegion"
+                            value={newRegionAdminRegion}
+                            required={true}
+                            width={1}
+                            onChange={this.handleChange}
+                        />
+                    </Form.Field>
+                    <Button type="submit" width={1}>
+                        Register Admin Region
                     </Button>
                 </Form>
             </div>
@@ -120,11 +151,24 @@ class Admin extends Component<{}, IAdminState> {
         event.preventDefault();
     }
 
-    private handleChangeNewIsp = (event: any) => {
+    private handleSubmitNewRegionAdmin = (event: any) => {
+        const { donationsContract, userAccount, newRegionAdminDid, newRegionAdminRegion } = this.state;
+        donationsContract.setRegionAdmin(new BigNumber(newRegionAdminRegion), newRegionAdminDid, { from: userAccount })
+            .then(() => {
+                alert('Transaction sent!');
+            });
+        event.preventDefault();
+    }
+
+    private handleChange = (event: any) => {
         if (event.target.name === 'newIspDid') {
             this.setState({ newIspDid: event.target.value });
         } else if (event.target.name === 'newIspRegion') {
             this.setState({ newIspRegion: event.target.value });
+        } else if (event.target.name === 'newRegionAdminDid') {
+            this.setState({ newRegionAdminDid: event.target.value });
+        } else if (event.target.name === 'newRegionAdminRegion') {
+            this.setState({ newRegionAdminRegion: event.target.value });
         }
     }
 }
