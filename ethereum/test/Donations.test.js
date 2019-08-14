@@ -44,13 +44,11 @@ contract('Donations', (accounts) => {
     // send donation
     it('send donation', async () => {
         const previousBalance = await web3.eth.getBalance(userAddress);
-        const transactionObject = {
-            to: donationsInstance.address,
+        const tx = await donationsInstance.donate({
             value: web3.utils.toWei('1', 'ether'),
             from: userAddress,
-        };
-        const tx = await web3.eth.sendTransaction(transactionObject);
-        const totalGas = tx.gasUsed * networkGasPrice;
+        });
+        const totalGas = tx.receipt.gasUsed * networkGasPrice;
         const contractBalance = await web3.eth.getBalance(donationsInstance.address);
         const currentBalance = await web3.eth.getBalance(userAddress);
         const difference = new BigNumber(previousBalance).minus(currentBalance).minus(totalGas).toNumber();
@@ -60,46 +58,32 @@ contract('Donations', (accounts) => {
 
     // send three donations
     it('send three donations', async () => {
-        const transactionObjectUser = {
-            to: donationsInstance.address,
+        await donationsInstance.donate({
             value: web3.utils.toWei('1', 'ether'),
             from: userAddress,
-        };
-        await web3.eth.sendTransaction(transactionObjectUser);
-        //
-        const transactionObjectAnotherUser = {
-            to: donationsInstance.address,
+        });
+        await donationsInstance.donate({
             value: web3.utils.toWei('2', 'ether'),
             from: anotherUserAddress,
-        };
-        await web3.eth.sendTransaction(transactionObjectAnotherUser);
-        //
-        const transactionObjectSomeOtherUser = {
-            to: donationsInstance.address,
+        });
+        await donationsInstance.donate({
             value: web3.utils.toWei('3', 'ether'),
             from: someOtherUserAddress,
-        };
-        await web3.eth.sendTransaction(transactionObjectSomeOtherUser);
-        //
+        });
         const contractBalance = await web3.eth.getBalance(donationsInstance.address);
         contractBalance.should.be.equal(web3.utils.toWei('6', 'ether'));
     });
 
     // admin region withdraws part of it
     it('admin region withdraws part of it', async () => {
-        const transactionObjectUser = {
-            to: donationsInstance.address,
+        await donationsInstance.donate({
             value: web3.utils.toWei('1', 'ether'),
             from: userAddress,
-        };
-        await web3.eth.sendTransaction(transactionObjectUser);
-        //
-        const transactionObjectAnotherUser = {
-            to: donationsInstance.address,
+        });
+        await donationsInstance.donate({
             value: web3.utils.toWei('2', 'ether'),
             from: anotherUserAddress,
-        };
-        await web3.eth.sendTransaction(transactionObjectAnotherUser);
+        });
         //
         const previousBalance = await web3.eth.getBalance(adminRegionAddress);
         const withdrawAmount = web3.utils.toWei('1.6', 'ether');

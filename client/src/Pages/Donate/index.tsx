@@ -1,8 +1,9 @@
+import awaitTransactionMined from 'await-transaction-mined';
+import BigNumber from 'bignumber.js';
 import React, { Component } from 'react';
 import { Button, Form, Heading, Text, Table } from 'rimble-ui';
 import styled from 'styled-components';
 import Cookies from 'universal-cookie';
-// import awaitTransactionMined from 'await-transaction-mined';
 
 
 import BlockchainGeneric, { IBasicComponentState } from '../../Common';
@@ -19,6 +20,8 @@ interface IDonateState extends IBasicComponentState {
     donationAmount: string;
     donationsContract: any;
     totalDonations: string;
+    isCurrentUserReginAdmin: boolean;
+    donationWithdrawAmount: string;
 }
 class Donate extends Component<{}, IDonateState> {
 
@@ -28,7 +31,9 @@ class Donate extends Component<{}, IDonateState> {
             accountsContract: undefined as any,
             cookies: new Cookies(),
             donationAmount: '',
+            donationWithdrawAmount: '',
             donationsContract: undefined as any,
+            isCurrentUserReginAdmin: undefined as any,
             totalDonations: '0',
             uport: getUport(),
             userAccount: '',
@@ -43,9 +48,11 @@ class Donate extends Component<{}, IDonateState> {
             const accountsContract = await BlockchainGeneric.loadAccountsContract(generic.web3);
             const donationsContract = await BlockchainGeneric.loadDonationsContract(generic.web3);
             const balanceDonationsContract = await generic.web3.eth.getBalance(donationsContract.address);
+            const userProfile = await accountsContract.getUser(cookies.get('did'));
             this.setState({
                 accountsContract,
                 donationsContract,
+                isCurrentUserReginAdmin: true, // userProfile[1].toNumber() === 3,
                 totalDonations: generic.web3.utils.fromWei(balanceDonationsContract.toString()),
                 userAccount: generic.userAccount,
                 web3: generic.web3,
@@ -92,7 +99,25 @@ class Donate extends Component<{}, IDonateState> {
         }).then(async (receipt: any) => {
             const { web3, donationsContract } = this.state;
             alert('Thank you for you donation.\nBalance will be updated after transaction is mined!');
-            // await awaitTransactionMined.awaitTx(web3, receipt.tx, {interval: 1000});
+            await awaitTransactionMined.awaitTx(web3, receipt.tx, {interval: 1000});
+            // update balance
+            const balanceDonationsContract = await web3.eth.getBalance(donationsContract.address);
+            this.setState({ totalDonations: web3.utils.fromWei(balanceDonationsContract.toString()) });
+        });
+        event.preventDefault();
+    }
+
+    public handleSubmitRequestWithdraw = (event: any) => {
+        new Promise(async (resolve: any, reject: any) => {
+            const { donationsContract, userAccount, donationWithdrawAmount, web3 } = this.state;
+            const receipt = await donationsContract.requestWithdraw(web3.utils.toWei(donationWithdrawAmount, 'ether'), {
+                from: userAccount,
+            });
+            resolve(receipt);
+        }).then(async (receipt: any) => {
+            const { web3, donationsContract } = this.state;
+            alert('Thank you for your request.\nBalance will be updated after transaction is mined!');
+            await awaitTransactionMined.awaitTx(web3, receipt.tx, {interval: 1000});
             // update balance
             const balanceDonationsContract = await web3.eth.getBalance(donationsContract.address);
             this.setState({ totalDonations: web3.utils.fromWei(balanceDonationsContract.toString()) });
@@ -104,15 +129,22 @@ class Donate extends Component<{}, IDonateState> {
         this.setState({ donationAmount: event.target.value });
     }
 
+    public handleDonationWithdrawAmountChange = (event: any) => {
+        this.setState({ donationWithdrawAmount: event.target.value });
+    }
+
     public render() {
         const {
-            donationAmount,
             cookies,
             userAccount,
             accountsContract,
             uport,
-            totalDonations,
+            isCurrentUserReginAdmin,
         } = this.state;
+        let contentPage;
+        if (isCurrentUserReginAdmin !== undefined) {
+            contentPage = (isCurrentUserReginAdmin) ? this.renderRegionAdminPage() : this.renderPublicPage();
+        }
         return (
             <>
                 <Navbar
@@ -122,41 +154,93 @@ class Donate extends Component<{}, IDonateState> {
                     uport={uport}
                 />
                 <Content>
-                    <br />
-                    <br />
-                    <br />
-                    <div style={{ textAlign: 'center' }}>
-                        <Heading.h2>Thank you</Heading.h2>
-                        <br />
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fermentum dapibus convallis.
-                            Nulla vel laoreet augue. In tincidunt felis sapien, vel molestie felis fringilla nec. Sed
-                            ac malesuada tortor. Etiam tincidunt in arcu eget sollicitudin. Vestibulum tempus blandit
-                            dui, pulvinar facilisis metus pharetra nec. Vivamus sed posuere massa. Aliquam accumsan ex
-                    sit amet ullamcorper ultricies. Nullam ac felis nisl. In id dictum felis.</p>
-                        <br /><br />
-                    </div>
-                    <Form onSubmit={this.handleSubmitDonate} style={{ padding: '0px 30%' }}>
-                        <Form.Field label="Amount to Donate in ETH" width={1}>
-                            <Form.Input
-                                type="text"
-                                name="donationAmount"
-                                required={true}
-                                value={donationAmount}
-                                onChange={this.handleDonationAmountChange}
-                                style={{ width: '100%' }}
-                            />
-                        </Form.Field>
-                        <br />
-                        <Button type="submit" width={1}>Donate</Button>
-                    </Form>
-                    <br />
-                    <br />
-                    <Heading.h2 textAlign="center">Total Donated</Heading.h2>
-                    <Heading.h4 textAlign="center">{totalDonations} ETH</Heading.h4>
-                    <br />
-                    <br />
-                    {this.listDonators()}
+                    {contentPage}
                 </Content>
+            </>
+        );
+    }
+
+    private renderRegionAdminPage = () => {
+        const { donationWithdrawAmount, totalDonations } = this.state;
+        return (
+            <>
+                <br />
+                <br />
+                <br />
+                <div style={{ textAlign: 'center' }}>
+                    <Heading.h2>Thank you</Heading.h2>
+                    <br />
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fermentum dapibus convallis.
+                        Nulla vel laoreet augue. In tincidunt felis sapien, vel molestie felis fringilla nec. Sed
+                        ac malesuada tortor. Etiam tincidunt in arcu eget sollicitudin. Vestibulum tempus blandit
+                        dui, pulvinar facilisis metus pharetra nec. Vivamus sed posuere massa. Aliquam accumsan ex
+                    sit amet ullamcorper ultricies. Nullam ac felis nisl. In id dictum felis.</p>
+                    <br /><br />
+                </div>
+                <br />
+                <br />
+                <Heading.h2 textAlign="center">Total Donated</Heading.h2>
+                <Heading.h4 textAlign="center">{totalDonations} ETH</Heading.h4>
+                <br />
+                <br />
+                <Text textAlign="center">You, as a region admin can request to withdraw a art of the donations.</Text>
+                <br />
+                <Form onSubmit={this.handleSubmitRequestWithdraw} style={{ padding: '0px 30%' }}>
+                    <Form.Field label="Amount Requesting to Winthdraw in ETH" width={1}>
+                        <Form.Input
+                            type="text"
+                            name="donationWithdrawAmount"
+                            required={true}
+                            value={donationWithdrawAmount}
+                            onChange={this.handleDonationWithdrawAmountChange}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Field>
+                    <br />
+                    <Button type="submit" width={1}>Request Withdraw</Button>
+                </Form>
+            </>
+        );
+    }
+
+    private renderPublicPage = () => {
+        const { donationAmount, totalDonations } = this.state;
+        return (
+            <>
+                <br />
+                <br />
+                <br />
+                <div style={{ textAlign: 'center' }}>
+                    <Heading.h2>Thank you</Heading.h2>
+                    <br />
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed fermentum dapibus convallis.
+                        Nulla vel laoreet augue. In tincidunt felis sapien, vel molestie felis fringilla nec. Sed
+                        ac malesuada tortor. Etiam tincidunt in arcu eget sollicitudin. Vestibulum tempus blandit
+                        dui, pulvinar facilisis metus pharetra nec. Vivamus sed posuere massa. Aliquam accumsan ex
+                    sit amet ullamcorper ultricies. Nullam ac felis nisl. In id dictum felis.</p>
+                    <br /><br />
+                </div>
+                <Form onSubmit={this.handleSubmitDonate} style={{ padding: '0px 30%' }}>
+                    <Form.Field label="Amount to Donate in ETH" width={1}>
+                        <Form.Input
+                            type="text"
+                            name="donationAmount"
+                            required={true}
+                            value={donationAmount}
+                            onChange={this.handleDonationAmountChange}
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Field>
+                    <br />
+                    <Button type="submit" width={1}>Donate</Button>
+                </Form>
+                <br />
+                <br />
+                <Heading.h2 textAlign="center">Total Donated</Heading.h2>
+                <Heading.h4 textAlign="center">{totalDonations} ETH</Heading.h4>
+                <br />
+                <br />
+                {this.listDonators()}
             </>
         );
     }
@@ -166,7 +250,7 @@ class Donate extends Component<{}, IDonateState> {
             <>
                 <Heading.h2 textAlign="center">Top 3 donators</Heading.h2>
                 <br />
-                <Table style={{width: '50%', margin: '0px 25%'}}>
+                <Table style={{ width: '50%', margin: '0px 25%' }}>
                     <thead>
                         <tr>
                             <th>From</th>
