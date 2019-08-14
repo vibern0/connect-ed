@@ -3,7 +3,7 @@ import { Button, Checkbox, Form, Heading, Text, Field, Input } from 'rimble-ui';
 import styled from 'styled-components';
 import Cookies from 'universal-cookie';
 
-import BlockchainGeneric, { IBasicComponentState, ipfs } from '../../Common';
+import BlockchainGeneric, { IBasicComponentState } from '../../Common';
 import Navbar from '../../Components/Navbar';
 import getUport from '../../utils/getUport';
 
@@ -47,9 +47,6 @@ class Historical extends Component<{}, IHistoricalState> {
 
     public handleSubmit = (event: any) => {
         // upload file
-        ipfs.add(this.uploadingFileBuffer).then((results: [{ path: string }]) => {
-            console.log(results);
-        });
         event.preventDefault();
     }
 

@@ -1,4 +1,3 @@
-import ipfsClient from 'ipfs-http-client';
 import truffleContract from 'truffle-contract';
 import Cookies from 'universal-cookie';
 import Web3 from 'web3';
@@ -7,11 +6,6 @@ import AccountsContract from '../contracts/Accounts.json';
 import DonationsContract from '../contracts/Donations.json';
 import ISPContract from '../contracts/ISP.json';
 
-export const ipfs = ipfsClient({
-    host: process.env.REACT_APP_IPFS_HOST,
-    port: process.env.REACT_APP_IPFS_PORT,
-    protocol: process.env.REACT_APP_IPFS_PROTOCOL,
-});
 export interface IBasicComponentState {
     web3: any;
     uport: any;
