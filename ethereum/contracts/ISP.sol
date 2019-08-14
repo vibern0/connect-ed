@@ -14,7 +14,9 @@ contract ISP is Ownable {
         string md5;
         address isp;
         uint256 region;
-        uint256 timestamp;
+        uint256 tsStart;
+        uint256 tsEnd;
+        uint256 tsPush;
     }
     DataFile[] private dataFiles;
     mapping(address => uint256) private ispOfRegion;
@@ -66,16 +68,20 @@ contract ISP is Ownable {
      * @param _md5 file's md5
      * @param _ispDid isp's did
      * @param _region map region to where the data belongs
+     * @param _timestampStart timestamp of the  data file's start
+     * @param _timestampEnd timestamp of the  data file's end
      */
     function uploadDataFile(
         string memory _ipfsHash,
         string memory _md5,
         string memory _ispDid,
-        uint256 _region
+        uint256 _region,
+        uint256 _timestampStart,
+        uint256 _timestampEnd
     ) public onlyISPOfRegion(_region) {
         Accounts accounts = Accounts(accountsContractAddress);
         (address ispAddress,) = accounts.getUser(_ispDid);
-        DataFile memory dataFile = DataFile(_ipfsHash, _md5, ispAddress, _region, block.timestamp);
+        DataFile memory dataFile = DataFile(_ipfsHash, _md5, ispAddress, _region, _timestampStart, _timestampEnd, block.timestamp);
         dataFiles.push(dataFile);
     }
 
