@@ -27,6 +27,7 @@
         "@types/react-simple-maps": "0.12.2",
         "@types/react-tooltip": "3.9.3",
         "@types/styled-components": "4.1.18",
+        "await-transaction-mined": "^1.0.12",
         "bignumber.js": "9.0.0",
         "d3-scale": "3.0.1",
         "ipfs-http-client": "33.1.1",
