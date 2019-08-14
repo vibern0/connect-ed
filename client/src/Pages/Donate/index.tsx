@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, Form, Heading, Text, Table } from 'rimble-ui';
 import styled from 'styled-components';
 import Cookies from 'universal-cookie';
+import awaitTransactionMined from 'await-transaction-mined';
 
 
 import BlockchainGeneric, { IBasicComponentState } from '../../Common';
@@ -83,12 +84,19 @@ class Donate extends Component<{}, IDonateState> {
                 currentWeb3 = generic.web3;
                 currentUserAccount = generic.userAccount;
             }
-            await currentDonationsContract.donate({
+            const receipt = await currentDonationsContract.donate({
                 from: currentUserAccount,
                 value: currentWeb3.utils.toWei(donationAmount, 'ether'),
             });
-            resolve();
-        }).then(console.log);
+            resolve(receipt);
+        }).then(async (receipt: any) => {
+            const { web3, donationsContract } = this.state;
+            alert('Thank you for you donation.\nBalance will be updated after transaction is mined!');
+            await awaitTransactionMined.awaitTx(web3, receipt.tx, {interval: 1000});
+            // update balance
+            const balanceDonationsContract = await web3.eth.getBalance(donationsContract.address);
+            this.setState({ totalDonations: web3.utils.fromWei(balanceDonationsContract.toString()) });
+        });
         event.preventDefault();
     }
 
