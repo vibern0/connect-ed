@@ -7,7 +7,7 @@ import getUport from '../../utils/getUport';
 import { Background, Content } from './styles';
 
 import Navbar from '../../Components/Navbar';
-import unicefLogo from './unicef-logo.png';
+import unicefLogo from './unicef-logo.webp';
 
 
 class Main extends Component<{}, IBasicComponentState> {

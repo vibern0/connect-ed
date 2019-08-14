@@ -6,9 +6,9 @@ import Cookies from 'universal-cookie';
 import BlockchainGeneric from '../../Common';
 
 import logo from '../../Assets/logo.webp';
-import avatar from './avatar.png';
+import avatar from './avatar.webp';
 import './index.css';
-import wifi from './wiki.png';
+import wifi from './wiki.webp';
 
 
 const NavbarItem = styled.div`
