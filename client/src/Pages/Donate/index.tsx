@@ -52,7 +52,7 @@ class Donate extends Component<{}, IDonateState> {
             this.setState({
                 accountsContract,
                 donationsContract,
-                isCurrentUserReginAdmin: true, // userProfile[1].toNumber() === 3,
+                isCurrentUserReginAdmin: userProfile[1].toNumber() === 3,
                 totalDonations: generic.web3.utils.fromWei(balanceDonationsContract.toString()),
                 userAccount: generic.userAccount,
                 web3: generic.web3,

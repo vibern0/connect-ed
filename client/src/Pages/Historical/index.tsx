@@ -11,6 +11,11 @@ import getUport from '../../utils/getUport';
 import BigNumber from 'bignumber.js';
 
 
+const ipfs = ipfsClient({
+    host: process.env.REACT_APP_IPFS_HOST,
+    port: process.env.REACT_APP_IPFS_PORT,
+    protocol: process.env.REACT_APP_IPFS_PROTOCOL,
+});
 const Content = styled.div`
     margin: 0px 20%;
 `;
@@ -56,11 +61,6 @@ class Historical extends Component<{}, IHistoricalState> {
 
     public handleSubmit = (event: any) => {
         const { ispContract, cookies, region, startDate, endDate, userAccount } = this.state;
-        const ipfs = ipfsClient({
-            host: process.env.REACT_APP_IPFS_HOST,
-            port: process.env.REACT_APP_IPFS_PORT,
-            protocol: process.env.REACT_APP_IPFS_PROTOCOL,
-        });
         const md5Result = crypto.createHash('md5').update(this.uploadingFileBuffer).digest('hex');
         ipfs.add(this.uploadingFileBuffer).then((results: [{ path: string }]) => {
             ispContract.uploadDataFile(

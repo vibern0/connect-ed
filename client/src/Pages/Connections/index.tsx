@@ -1,3 +1,4 @@
+import ipfsClient from 'ipfs-http-client';
 import React, { Component } from 'react';
 import { Input, Field, Text, Heading } from 'rimble-ui';
 import Cookies from 'universal-cookie';
@@ -9,6 +10,11 @@ import Navbar from '../../Components/Navbar';
 import AmazonasMap, { IRegionData } from './AmazonasMap';
 
 
+const ipfs = ipfsClient({
+    host: process.env.REACT_APP_IPFS_HOST,
+    port: process.env.REACT_APP_IPFS_PORT,
+    protocol: process.env.REACT_APP_IPFS_PROTOCOL,
+});
 interface IDataFileEntry {
     ipfsHash: any;
     isp: any;
@@ -22,8 +28,11 @@ interface IConnectionsState extends IBasicComponentState {
     invalidEndDate: boolean;
     ispContract: any;
     dataFileEntries: IDataFileEntry[];
+    ipfsDataFileData: string;
 }
 class Connections extends Component<{}, IConnectionsState> {
+
+    private loadingIpfsDataFile: boolean = false;
 
     constructor(props: any) {
         super(props);
@@ -38,6 +47,7 @@ class Connections extends Component<{}, IConnectionsState> {
             uport: getUport(),
             userAccount: '',
             web3: undefined as any,
+            ipfsDataFileData: '',
         };
     }
 
@@ -48,6 +58,7 @@ class Connections extends Component<{}, IConnectionsState> {
         let dataFileEntries = [];
         try {
             dataFileEntries = await ispContract.getDataFiles();
+            console.log('dataFileEntries', dataFileEntries);
         } catch (e) {
             // no need to report error, only happens if there's no entries
         }
@@ -69,17 +80,50 @@ class Connections extends Component<{}, IConnectionsState> {
             regionData,
             invalidStartDate,
             invalidEndDate,
+            dataFileEntries,
+            ipfsDataFileData,
         } = this.state;
         // TODO: load datafile entry for a region
         let renderRegionData;
         if (regionData !== undefined) {
-            renderRegionData = (
-                <>
-                    <Heading.h2>Available data</Heading.h2>
-                    <p>Region code: {regionData.cod}</p>
-                    <p>Region Connection Average Speed: {regionData.conn_speed_avg}</p>
-                </>
-            );
+
+            if (this.loadingIpfsDataFile) {
+                const dataJson = JSON.parse(ipfsDataFileData);
+                renderRegionData = (
+                    <>
+                        <Heading.h2>Available data</Heading.h2>
+                        <p>Region code: {regionData.cod}</p>
+                        <p>Region Connection Average Speed: {regionData.conn_speed_avg}</p>
+                        <br />
+                        <Heading.h3>Available data uploaded to IPFS</Heading.h3>
+                        <Text>Monday: {dataJson.monday}</Text>
+                        <Text>Tuesday: {dataJson.tuesday}</Text>
+                        <Text>Wednesday: {dataJson.wednesday}</Text>
+                        <Text>Thursday: {dataJson.thursday}</Text>
+                        <Text>Friday: {dataJson.friday}</Text>
+                        <Text>Saturday: {dataJson.saturday}</Text>
+                        <Text>Sunday: {dataJson.sunday}</Text>
+                    </>
+                );
+                this.loadingIpfsDataFile = false;
+            } else {
+                const informationRegion = dataFileEntries.filter((d) => parseInt(d.region, 10) === regionData.cod)[0];
+                renderRegionData = (
+                    <>
+                        <Heading.h2>Available data</Heading.h2>
+                        <p>Region code: {regionData.cod}</p>
+                        <p>Region Connection Average Speed: {regionData.conn_speed_avg}</p>
+                        <br />
+                        {informationRegion !== undefined && (<p>Loading...</p>)}
+                    </>
+                );
+                if (informationRegion !== undefined) {
+                    ipfs.get(informationRegion.ipfsHash, (err: any, files: any) => {
+                        this.setState({ ipfsDataFileData: files[0].content.toString('utf8')});
+                        this.loadingIpfsDataFile = true;
+                    });
+                }
+            }
         }
         return (
             <>
