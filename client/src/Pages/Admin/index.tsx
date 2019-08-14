@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Button, Form, Heading, Box } from 'rimble-ui';
 import Cookies from 'universal-cookie';
 
 import BlockchainGeneric, { IBasicComponentState } from '../../Common';
@@ -9,6 +10,9 @@ import Navbar from '../../Components/Navbar';
 
 interface IAdminState extends IBasicComponentState {
     ispContract: any;
+    isCurrentUserOwner: boolean;
+    newIspDid: string;
+    newIspRegion: string;
 }
 class Admin extends Component<{}, IAdminState> {
 
@@ -17,7 +21,10 @@ class Admin extends Component<{}, IAdminState> {
         this.state = {
             accountsContract: undefined as any,
             cookies: new Cookies(),
+            isCurrentUserOwner: false,
             ispContract: undefined as any,
+            newIspDid: '',
+            newIspRegion: '',
             uport: getUport(),
             userAccount: '',
             web3: undefined as any,
@@ -28,8 +35,10 @@ class Admin extends Component<{}, IAdminState> {
         const generic = await BlockchainGeneric.onLoad();
         const accountsContract = await BlockchainGeneric.loadAccountsContract(generic.web3);
         const ispContract = await BlockchainGeneric.loadISPContract(generic.web3);
+        const isCurrentUserOwner = await ispContract.owner() === generic.userAccount;
         this.setState({
             accountsContract,
+            isCurrentUserOwner,
             ispContract,
             userAccount: generic.userAccount,
             web3: generic.web3,
@@ -49,6 +58,7 @@ class Admin extends Component<{}, IAdminState> {
             userAccount,
             accountsContract,
             uport,
+            isCurrentUserOwner,
         } = this.state;
         return (
             <>
@@ -60,9 +70,43 @@ class Admin extends Component<{}, IAdminState> {
                 />
                 <br />
                 <br />
-                <p>Hello Admin!</p>
+                {isCurrentUserOwner && this.renderAdminAction()}
             </>
         );
+    }
+
+    private renderAdminAction = () => {
+        const { newIspDid, newIspRegion } = this.state;
+        return (
+            <>
+                <Heading.h2>Set account as ISP</Heading.h2>
+                <Form onSubmit={this.handleSubmitNewIsp}>
+                    <Form.Field label="DID of the new ISP" width={1}>
+                        <Form.Input
+                            type="string"
+                            value={newIspDid}
+                            required={true}
+                            width={1}
+                        />
+                    </Form.Field>
+                    <Form.Field label="ISP of Readion (id)" width={1}>
+                        <Form.Input
+                            type="string"
+                            value={newIspRegion}
+                            required={true}
+                            width={1}
+                        />
+                    </Form.Field>
+                    <Button type="submit" width={1}>
+                        Register ISP
+                    </Button>
+                </Form>
+            </>
+        );
+    }
+
+    private handleSubmitNewIsp = (event: any) => {
+        event.preventDefault();
     }
 }
 
