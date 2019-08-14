@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Checkbox, Form, Heading, Text } from 'rimble-ui';
+import { Button, Checkbox, Form, Heading, Text, Field, Input } from 'rimble-ui';
 import styled from 'styled-components';
 import Cookies from 'universal-cookie';
 
@@ -11,7 +11,13 @@ import getUport from '../../utils/getUport';
 const Content = styled.div`
     margin: 0px 20%;
 `;
-class Historical extends Component<{}, IBasicComponentState> {
+interface IHistoricalState extends IBasicComponentState {
+    invalidStartDate: boolean;
+    invalidEndDate: boolean;
+    startDate: string;
+    endDate: string;
+}
+class Historical extends Component<{}, IHistoricalState> {
     private uploadingFileBuffer: Buffer = undefined as any;
 
     constructor(props: any) {
@@ -22,6 +28,10 @@ class Historical extends Component<{}, IBasicComponentState> {
             uport: getUport(),
             userAccount: '',
             web3: undefined as any,
+            invalidEndDate: false,
+            invalidStartDate: false,
+            startDate: '',
+            endDate: '',
         };
     }
 
@@ -62,7 +72,7 @@ class Historical extends Component<{}, IBasicComponentState> {
     }
 
     private renderUploadOption = () => {
-        const { cookies, userAccount, accountsContract, uport } = this.state;
+        const { cookies, userAccount, accountsContract, uport, invalidStartDate, invalidEndDate, startDate, endDate } = this.state;
         return (
             <>
                 <Navbar
@@ -96,7 +106,7 @@ class Historical extends Component<{}, IBasicComponentState> {
                         Maecenas lobortis vehicula ullamcorper.</Text>
                     <br /><br /><br />
                     <Form onSubmit={this.handleSubmit} style={{ padding: '0px 25%' }} encType="multipart/form-data">
-                        <Form.Field label="Data File to Upload" width={1}>
+                        <Field label="Data File to Upload" width={1}>
                             <Form.Input
                                 width="100%"
                                 id="my_file_upload"
@@ -104,10 +114,26 @@ class Historical extends Component<{}, IBasicComponentState> {
                                 type="file"
                                 onChange={this.captureFile}
                             />
-                        </Form.Field>
+                        </Field>
+                        <Field label="Start Date">
+                            <Input
+                                borderColor={invalidStartDate ? 'red' : 'grey'}
+                                value={this.formatDate(startDate)}
+                                type="date"
+                                onChange={this.handleChangeIntervalStartDate}
+                            />
+                        </Field>
+                        <Field style={{ float: 'right' as 'right' }} label="End Date">
+                            <Input
+                                borderColor={invalidEndDate ? 'red' : 'grey'}
+                                value={this.formatDate(endDate)}
+                                type="date"
+                                onChange={this.handleChangeIntervalEndDate}
+                            />
+                        </Field>
                         <Checkbox label="Your agree with the terms and conditions" required={true} />
                         <br /><br />
-                        <Button type="submit" width={1}>Upload</Button>
+                        <Button type="submit" disabled={cookies.get('did') === 'demo-isp'} width={1}>Upload</Button>
                     </Form>
                 </Content>
                 <br />
@@ -115,6 +141,30 @@ class Historical extends Component<{}, IBasicComponentState> {
                 <br />
             </>
         );
+    }
+
+    private formatDate = (timestamp: string) => {
+        if (timestamp === '') {
+            return '';
+        }
+        const date = new Date(parseInt(timestamp));
+        const output = date.getFullYear() + '-' + ("0" + (date.getMonth() + 1)).slice(-2) + '-'
+            + ("0" + date.getDate()).slice(-2);
+        return output;
+    }
+
+    private handleChangeIntervalStartDate = (event: any) => {
+        const inputDateFromUser = new Date();
+        inputDateFromUser.setTime(event.target.valueAsNumber); // javascript timestamps are in milliseconds
+        this.setState({ invalidStartDate: (inputDateFromUser.getDay() !== 0), startDate: event.target.valueAsNumber });
+        event.persist();
+    }
+
+    private handleChangeIntervalEndDate = (event: any) => {
+        const inputDateFromUser = new Date();
+        inputDateFromUser.setTime(event.target.valueAsNumber); // javascript timestamps are in milliseconds
+        this.setState({ invalidEndDate: (inputDateFromUser.getDay() !== 6), endDate: event.target.valueAsNumber });
+        event.persist();
     }
 }
 
