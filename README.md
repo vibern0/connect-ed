@@ -21,7 +21,13 @@ Please, make sure to have a local ipfs node instance running.
   - The ISP Admin Account. 
   - The Region Admin Account 
   - The Public View  
- - A Demo Account 
+  - A Demo Account 
+  
+* The Accounts Smart Contract contains logic for user account management including:  
+  - Allowing a user to sign up with their uport DID
+  - Getting a user from the Ethereum blockchain 
+  - Checking the user is valid against the address in the uPort DID registry 
+  - Allowing the owner to invite other users to have specials roles in the system
 
 ## Assumptions
 
@@ -30,8 +36,6 @@ Please, make sure to have a local ipfs node instance running.
 
 ### General
 * Most imputs have not validation, be sure to write valid data, like in donation window.
-
-## Actors
 
 
 ## How to run the demo
