@@ -1,5 +1,8 @@
 # Connect-Ed
 
+!(images/home.png)
+
+
 ## Built by
 * [Thomas Moran](https://www.linkedin.com/in/thomas-moran-8634007/)
 * [Bernardo Vieira](https://www.linkedin.com/in/obernardovieira/)
