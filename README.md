@@ -1,6 +1,6 @@
 # Connect-Ed
 
-!(images/home.png)
+![](images/home.png)
 
 
 ## Built by
