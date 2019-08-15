@@ -13,6 +13,16 @@ With Linux or OSX, just run the `local_demo.sh` script at the project root folde
 
 Please, make sure to have a local ipfs node instance running.
 
+## Overview 
+
+* The user logs in by scanning the QR code from the uPort app on their mobile phone  
+
+* There are several different accounts or views in the App:  
+  - The ISP Admin Account. 
+  - The Region Admin Account 
+  - The Public View  
+ - A Demo Account 
+
 ## Assumptions
 
 ### ISP
