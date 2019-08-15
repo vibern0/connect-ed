@@ -1,11 +1,12 @@
 # Connect-Ed
 
-![](images/home.png)
-
-
 ## Built by
 * [Thomas Moran](https://www.linkedin.com/in/thomas-moran-8634007/)
 * [Bernardo Vieira](https://www.linkedin.com/in/obernardovieira/)
+
+
+![](images/home.png)
+
 
 ## Usage
 Please install all dependencies before doing anything. Use `npm install` or `yarn`
@@ -26,18 +27,36 @@ Please, make sure to have a local ipfs node instance running.
   - The Public View  
   - A Demo Account 
   
-* The Accounts Smart Contract contains logic for user account management including:  
+* The Accounts Smart Contract contains logic for user account management including: 
   - Allowing a user to sign up with their uport DID
   - Getting a user from the Ethereum blockchain 
   - Checking the user is valid against the address in the uPort DID registry 
   - Allowing the owner to invite other users to have specials roles in the system
   
-* The Donations Screen allows anyone to donate to the project in ETH 
-  - The Donations Smart Contract contains logic for donation management :  
-  - Includes functions to receive donations  
+* The Donations Screen allows anyone to donate to the project in ETH
+  - The Donations Smart Contract contains logic for donation management : 
+  - Includes functions to receive donations 
   - Allows a region administrator to withdraw an amount of funds to that region. 
   
+![](images/donations.png)
+
+* The Connections Screen allows anyone to interactively view the current connectivity statistics.
+  - The network connectivity history can also be visualised by date
+  - There is an admin page which allows the user that deployed the contracts to set up roles within the system 
+
+![](images/maps.png)
   
+* The ISP Admin Screen allows ISP's to upload connectivity stats for a region for a given time period. 
+  - The connectivity data uploaded is stored in IPFS as it needs to be publicly available.
+  - The file upload format must use a valid region id,  ISP id and region admin. 
+  - The ISP smart contract contains functions to get the data files from IPF
+  - a function to set the region for an ISP and a function to upload the data files to IPFS 
+  
+![](images/ISP-upload.png)
+
+
+## Pitch Deck
+Please check out the full pitch deck attached to the repo 
 
 ## Assumptions
 
@@ -50,7 +69,7 @@ Please, make sure to have a local ipfs node instance running.
 
 ## How to run the demo
 
-As written above, the easiest way to run the demo is by running the script, but in case you want to run in interely by hand, here's a quick intro.
+The easiest way to run the demo is by running the `local_demo.sh` script, but in case you want to run in entirely by hand, here's a quick intro.
 
 First of all, install all dependencies, remove the *contracts* folder in client/src/ folder, then go to *ethereum* folder and start a local ganache network by running `npm run start:ganache:dev` and then, without closing it, run `npm run deploy:ganache`.
 
@@ -58,17 +77,12 @@ Now, go to *client* folder, run `npm run link-contracts` to create a folder link
 
 Please make sure to have a ipfs node running locally or copy the .env.production to .env.development
 
-Ready to start the frontend, just do it with `npm run start` from the client folder.
+To start the frontend just do it with `npm run start` from the client folder.
 
-In order to use the full app you need at least two different accounts. One of them to be the ISP, which you can use to upload the data file (`demo_data_isp_file.json`) in this project root folder in the /historical page. The second account to be a region admin, so you can withdraw the money donated. Donations are accepted by anyone.
-
-The demo file must be uploaded to a valid region id, for example `1302900`, as well as setting the ISP and region admin.
-
-To set the role to each of those two accounts, you need to use an hidden page /admin. Although the page is public (just not listed), only the user that deployed the contracts can actually set roles.
-
-You are ready, feel free to play around.
+## Demo Account View
 
 In case you do not want to sign up, you can see the system by using either ISP or region admin demo accounts.
+You can also view a working demo here: https://connect-ed.netlify.com 
 
 
 ## Credits
