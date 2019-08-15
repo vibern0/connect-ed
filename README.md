@@ -28,6 +28,13 @@ Please, make sure to have a local ipfs node instance running.
   - Getting a user from the Ethereum blockchain 
   - Checking the user is valid against the address in the uPort DID registry 
   - Allowing the owner to invite other users to have specials roles in the system
+  
+* The Donations Screen allows anyone to donate to the project in ETH 
+  - The Donations Smart Contract contains logic for donation management :  
+  - Includes functions to receive donations  
+  - Allows a region administrator to withdraw an amount of funds to that region. 
+  
+  
 
 ## Assumptions
 
