@@ -22,24 +22,36 @@ Please reference for detailed descriptions.
   - The Public View  
   - A Demo Account 
   
+  
+  
 * The Accounts Smart Contract contains logic for user account management including: 
   - Allowing a user to sign up with their uport DID
   - Getting a user from the Ethereum blockchain 
   - Checking the user is valid against the address in the uPort DID registry 
   - Allowing the owner to invite other users to have specials roles in the system
   
+  
+  
 * The Donations Screen allows anyone to donate to the project in ETH
   - The Donations Smart Contract contains logic for donation management : 
   - Includes functions to receive donations 
   - Allows a region administrator to withdraw an amount of funds to that region. 
   
+  
+  
 ![](images/donations.png)
+
+
 
 * The Connections Screen allows anyone to interactively view the current connectivity statistics.
   - The network connectivity history can also be visualised by date
   - There is an admin page which allows the user that deployed the contracts to set up roles within the system 
 
+
+
 ![](images/maps.png)
+  
+  
   
 * The ISP Admin Screen allows ISP's to upload connectivity stats for a region for a given time period. 
   - The connectivity data uploaded is stored in IPFS as it needs to be publicly available.
@@ -47,7 +59,10 @@ Please reference for detailed descriptions.
   - The ISP smart contract contains functions to get the data files from IPF
   - a function to set the region for an ISP and a function to upload the data files to IPFS 
   
+  
+  
 ![](images/ISP-upload.png)
+
 
 
 ## Usage
