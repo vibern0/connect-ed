@@ -7,15 +7,10 @@
 
 ![](images/home.png)
 
+## Introduction 
+What follows is an abridged version of the full pitch deck attached to the repo in the /pitch folder.
+Please reference for detailed descriptions.
 
-## Usage
-Please install all dependencies before doing anything. Use `npm install` or `yarn`
-
-To run it locally, please remove the *contracts* folder in client/src/ folder, as it is there to be used on the live demo.
-
-With Linux or OSX, just run the `local_demo.sh` script at the project root folder.
-
-Please, make sure to have a local ipfs node instance running.
 
 ## Overview 
 
@@ -55,8 +50,16 @@ Please, make sure to have a local ipfs node instance running.
 ![](images/ISP-upload.png)
 
 
-## Pitch Deck
-Please check out the full pitch deck attached to the repo 
+## Usage
+Please install all dependencies before doing anything. Use `npm install` or `yarn`
+
+To run it locally, please remove the *contracts* folder in client/src/ folder, as it is there to be used on the live demo.
+
+With Linux or OSX, just run the `local_demo.sh` script at the project root folder.
+
+Please, make sure to have a local ipfs node instance running.
+
+
 
 ## Assumptions
 
